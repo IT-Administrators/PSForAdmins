@@ -1,13 +1,13 @@
 ﻿<#
 .Synopsis
-    Get all loaded assemblys for the running powershell instance.
+    Get all loaded assemblies for the running powershell instance.
 
 .DESCRIPTION
     This script gets all loaded assemblies for the running powershell session. You can import assemblies by using 
-    [System.Refelection.Assembly]::LoadWithPartialName("AssemblyName"). If you use this script in a powershell ise instance
-    you will get another output than using this script in a normal powershell session. That's because powershell ise imports
-    assemblies like [System.Windows.Forms] by default and the powershell console doesn't. 
-    Because of the different results depending on where this script is used there's no import assemblie switch. 
+    <[System.Refelection.Assembly]::LoadWithPartialName("AssemblyName")>. If you use this script in a powershell_ise instance
+    you will get another output than using this script in a normal powershell session. That's because powershell_ise imports
+    assemblies like <[System.Windows.Forms]> by default and the powershell console doesn't. 
+    Because of the different results depending on where this script is used there's no import assembly switch. 
 
 .EXAMPLE
     .\Get-Assemblies.ps1 -GetSpecificAssemblyByName Forms
