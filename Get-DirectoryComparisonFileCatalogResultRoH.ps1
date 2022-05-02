@@ -7,7 +7,7 @@
     In the end the files that don't match are shown. After comparison the catalog is removed.
 
 .EXAMPLE
-    .\Get-DirectoryComparisonFileCatalogResult.ps1 -SourceDirectory ~\PS-Scripts -DestinationDirectory ~\PS-Scripts
+    .\Get-DirectoryComparisonFileCatalogResultRoH.ps1 -SourceDirectory ~\PS-Scripts -DestinationDirectory ~\PS-Scripts
 
     Status        : Valid
     HashAlgorithm : SHA256
