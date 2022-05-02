@@ -3,7 +3,7 @@
     Enable windows sandbox.
 
 .DESCRIPTION
-    This script enables the windows sandbox. Use the -StartDefaultWindowsSandbox or -StartCustomWindowsSandbox  switch to start the application from your console.
+    This script enables the windows sandbox. Use the -StartDefaultWindowsSandbox or -StartCustomWindowsSandbox switch to start the application from your console.
     The windows sandbox has some prerequisites. These will be checked by using the -EnableWindowsSandbox switch by default. 
     You can not enable this feature on Windows 10 Home Edition.
 
