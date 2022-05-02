@@ -8,7 +8,7 @@
     If you want to copy your certificate to another directory in your filesystem you can't use this script.
 
 .EXAMPLE
-    .\Copy-SelfSignedCertificateForCodeSigningRoH.ps1 -GetSelfSignedCertificate Example
+    Copy-CertificateToLocationRoH.ps1 -GetSelfSignedCertificate Example
 
     PSParentPath: Microsoft.PowerShell.Security\Certificate::CurrentUser\TrustedPublisher
 
@@ -23,7 +23,7 @@
     A98FD71F1311A63205AA2D65EAF3FED08BCC107F  CN=Test_CodeSigning
 
 .EXAMPLE
-    .\Copy-CertificateToLocationRoH.ps1 -CopySelfSignedCertificate CN=ExampleCert -OldCertificateStoreLocation Cert:\CurrentUser\My -NewCertificateStoreLocation Cert:\CurrentUser\Root, Cert:\CurrentUser\TrustedPublisher
+    Copy-CertificateToLocationRoH.ps1 -CopySelfSignedCertificate CN=ExampleCert -OldCertificateStoreLocation Cert:\CurrentUser\My -NewCertificateStoreLocation Cert:\CurrentUser\Root, Cert:\CurrentUser\TrustedPublisher
 
     Thumbprint                                Subject                                                                                                           
     ----------                                -------                                                                                                           
@@ -54,14 +54,14 @@ param(
     [Parameter(
     ParameterSetName='CopySelfSignedCertificate',
     Position=0,
-    HelpMessage='Store Location.')]
+    HelpMessage='Old store location.')]
     [Alias("CopyFrom")]
     [String[]]$OldCertificateStoreLocation,
 
     [Parameter(
     ParameterSetName='CopySelfSignedCertificate',
     Position=0,
-    HelpMessage='Store Location.')]
+    HelpMessage='New store location.')]
     [Alias("CopyTo")]
     [String[]]$NewCertificateStoreLocation
 )
