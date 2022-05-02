@@ -12,7 +12,7 @@
     No output. This imports the used functions if you uncomment the function at the end.
 
 .EXAMPLE
-    GetExchangeMailboxInfos.ps1 -GetAllMailboxes
+    .\Get-ExchangeMailboxInfosRoH.ps1 -GetAllMailboxes
 
     Name                      Alias                ServerName       ProhibitSendQuota
     ----                      -----                ----------       -----------------
@@ -21,21 +21,21 @@
     Example, User3            E.User3              ExampleServer    Unlimited
     
 .EXAMPLE
-    GetExchangeMailboxInfos.ps1 -GetMailbox Example
+    .\Get-ExchangeMailboxInfosRoH.ps1 -GetMailbox Example
     
     Name                      Alias                ServerName       ProhibitSendQuota
     ----                      -----                ----------       -----------------
     Example, User             E.User               ExampleServer    Unlimited
 
 .EXAMPLE
-    .\GetExchangeMailboxInfos.ps1 -GetSharedMailboxPermissions Example
+    .\Get-ExchangeMailboxInfosRoH.ps1 -GetSharedMailboxPermissions Example
 
     User                      AccessRights                                                              IsInherited  Deny
     ----                      ------------                                                              -----------  ----                    
     Example                   {FullAccess, DeleteItem, ReadPermission, ChangePermission, ChangeOwner}   True         False
 
 .EXAMPLE
-    .\GetExchangeMailboxInfos.ps1 -GetSharedMailboxPermissionForUser
+    .\Get-ExchangeMailboxInfosRoH.ps1 -GetSharedMailboxPermissionForUser
 
     Supply values for the following parameters:
     (Type !? for Help.)
