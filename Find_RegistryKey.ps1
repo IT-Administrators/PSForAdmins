@@ -12,8 +12,8 @@ Set-Location HKCU:
 #Showing current location for proof
 Get-Location | Out-Default
 ''
-<#Searching directory for the specified file recursive to look into every folder and index every file
-Erroraction variable is used because if thescript is used in user context there are a lot of "Permission Denied" messages #>
+<#Searching directory for the specified key recursive to look into every folder and index every key.
+Erroraction variable is used because if the script is used in user context there are a lot of "Permission Denied" messages #>
 Get-ChildItem HKCU: -Recurse | Where-Object Name -like "*$WhatYaLookingFor*" | Select-Object Name | Out-GridView -ErrorAction SilentlyContinue
 #Changing directory to HKEY_LOCAL_MACHINE
 Set-Location HKLM:
@@ -21,7 +21,7 @@ Set-Location HKLM:
 #Showing current location for proof
 Get-Location | Out-Default
 ''
-#Searching directory for the specified file recursive to look into every folder and index every file
+#Searching directory for the specified key recursive to look into every folder and index every key.
 Get-ChildItem HKLM: -Recurse | Where-Object Name -like "*$WhatYaLookingFor*" | Select-Object Name | Out-GridView -ErrorAction SilentlyContinue
 ''
 Write-Output "Done!"
