@@ -1,13 +1,13 @@
 ﻿<#
 .Synopsis
-   Get acces control lists.
+   Get access control lists.
 
 .DESCRIPTION
    With this script you can read all acls of one or more drives or files.
 
 .EXAMPLE
 
-    .\Get-AclOfFileOrDrive.ps1 -GetAllDrives
+    .\Get-AclOfFileOrDriveRoH.ps1 -GetAllDrives
 
     Name           Used (GB)     Free (GB) Provider      Root                  CurrentLocation
     ----           ---------     --------- --------      ----                  ---------------
@@ -23,7 +23,7 @@
 
 .EXAMPLE
     
-    .\Get-AclOfFileOrDrive.ps1 -GetACLOfDrive C:
+    .\Get-AclOfFileOrDriveRoH.ps1 -GetACLOfDrive C:
 
     FileSystemRights  : FullControl
     AccessControlType : Allow
@@ -36,7 +36,7 @@
 
 .EXAMPLE
 
-    .\Get-AclOfFileOrDrive.ps1 -GetACLOfChildItems ~\PS-Scripts
+    .\Get-AclOfFileOrDriveRoH.ps1 -GetACLOfChildItems ~\PS-Scripts
 
     Acl on file Example.txt
 
