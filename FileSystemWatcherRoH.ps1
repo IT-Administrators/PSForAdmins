@@ -5,16 +5,16 @@
 .DESCRIPTION
     This script implements a filesystemwatcher with logging to a logfile. I prefer the logfile
     because using this with console output interrupts my workflow after every event. 
-    The logfile is created at ~\Desktop\Fsw.txt. Everytime this script is used the logfile is 
+    The logfile is created at ~\Desktop\Fswlog.txt. Everytime this script is used the logfile will be
     overwritten, so be careful if you use it. I would recommend copying the logfile to another location after 
     ending the current session. If you only want to monitor your specified directory and not the ones underneath it
     use the <-IncludeSubDirectories> switch and set it to $false. It's $true by default.
     Because of some weird behavior of the filesystemwatcher the log gets filled with change notifications from the logfile itself.
-    So i filtered for every notification thats not related with the logfile. By filtering for these notifications, i got a logfile
+    So i filtered for every notification that's not related with the logfile. By filtering for these notifications, i got a logfile
     with a lot of space between every notification and than i trimmed for this blank space to get a well formated logfile
     as shown below.
     You can not use this filesystemwatcher on the windows registry or other psdrives that are not a filesystem but it works on 
-    network shares.
+    network shares with ntfs permissions, samba shares and on linux.
 
     To stop monitoring you need to close the current session.
 
@@ -38,7 +38,7 @@
 
     .\FileSystemWatcherRoH.ps1 -WatchDirectory ~\Desktop\ -Filter "Test.txt"
 
-    C:\Users\ExampleUser\Desktop\Test.txt was Renamed to fadfadfadfa.txt at 29.04.2022 13:31:36
+    C:\Users\ExampleUser\Desktop\Test.txt was Renamed to Example.txt at 29.04.2022 13:31:36
     C:\Users\ExampleUser\Desktop\Test.txt was Changed at 29.04.2022 13:32:4
 
 .NOTES
