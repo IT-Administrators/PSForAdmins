@@ -2,8 +2,7 @@
 Author: IT-Administrators
 Powershell Version: 5.1.19041.1237
 #>
-<#This script generates a local user account.You can use this with winrm to create local user account on every client in your active directory.
-It doesn't work local.#>
+<#This script generates a local user account. You can use this with winrm to create local user account on every client in your active directory.#>
 "Generate local user account"
 ''
 $Name = "Test"
