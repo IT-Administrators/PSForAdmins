@@ -3,28 +3,28 @@
     Get all file sizes.
 
 .DESCRIPTION
-    This script gets all files in a directory, the sum of all file sizes of the specified directory and the largest file in the directory.
+    This script gets all files sizes in a directory, the sum of all file sizes of the specified directory and the largest file in the directory.
 
 .EXAMPLE
-    .\Get-FilesSizeOfFilesInDirectory.ps1 -GetAllFilesInDirectory -GetFilesOfDirectory C:\Temp
+    .\Get-FilesSizeOfFilesInDirectoryRoH.ps1 -GetAllFilesInDirectory -GetFilesOfDirectory C:\Temp
     
     ExampleFile.txt
     ...
 
 .EXAMPLE
-    .\Get-FilesSizeOfFilesInDirectory.ps1 -GetSumOfAllFiles -GetFilesOfDirectory C:\Temp
+    .\Get-FilesSizeOfFilesInDirectoryRoH.ps1 -GetSumOfAllFiles -GetFilesOfDirectory C:\Temp
 
     1,20 GB
 
 .EXAMPLE
-    .\Get-FilesSizeOfFilesInDirectory.ps1 -GetLargestFile -GetFilesOfDirectory C:\Temp -SetMeasuringUnit 1MB
+    .\Get-FilesSizeOfFilesInDirectoryRoH.ps1 -GetLargestFile -GetFilesOfDirectory C:\Temp -SetMeasuringUnit 1MB
 
     Name                                  Megabytes
     ----                                  ---------
     Test.txt                              0,01
 
 .EXAMPLE
-     .\Get-FilesSizeOfFilesInDirectory.ps1 -GetSmallesttFile -GetFilesOfDirectory C:\Temp -SetMeasuringUnit 1MB
+     Get-FilesSizeOfFilesInDirectoryRoH.ps1 -GetSmallestFile -GetFilesOfDirectory C:\Temp -SetMeasuringUnit 1MB
 
     Name                                  Megabytes
     ----                                  ---------
