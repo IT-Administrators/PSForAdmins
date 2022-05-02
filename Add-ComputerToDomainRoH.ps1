@@ -1,11 +1,11 @@
 ﻿<#
 .Synopsis
-   Adds a Computer to an active directory.
+   Adds a computer to an active directory.
 
 .DESCRIPTION
-    This script adds your client to your domain. You need to be in the same subnet like your DC.
+    This script adds your client to your domain. You need to be in the same subnet like your domain controller.
     Maybe you need to change the DNS server manually before you use this script.
-    You have to restart after using this script othwerisethe domain join wont take effect.
+    You have to restart after using this script otherwise the domain join won't take effect.
 
 .EXAMPLE
    .\Add-ComputerToDomainRoH.ps1 -ADDomainName ExampleDomain -ADAllowedUser ExampleDomain\Admin -NewComputerName ExampleComputer2
