@@ -4,7 +4,7 @@
 
 .DESCRIPTION
     This script compares directories for differences and shows where the difference is by giving the filename and
-    the sourcefolder.
+    the sourcefolder. To do that it uses the build in <Compare-Object> cmdlet.
 
 .EXAMPLE
     .\Get-DirectoryComparisonResultRoH.ps1 -SourceFolder ~\PS-Scripts -DestinationFolder ~\PS-Scripts
