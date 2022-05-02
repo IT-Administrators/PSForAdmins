@@ -1,11 +1,12 @@
 ﻿<#
 .Synopsis
-    Create self signed certificate.
+    Create a self signed certificate.
 
 .DESCRIPTION
     This script creates a self signed certificate for code signing. To use that certificate you need to copy it to 
     CurrentUser\Root and CurrentUser\TrustedPublishers. You can copy the certificate by hand or by using Copy-CertificateToLocationRoH.ps1
-    from my repository. After the certificate is copied you can use the scripts signed with your certificate.
+    from my repository. After the certificate is copied you need to apply the script. You can apply this script by using the Set-CodeSignatureForPSScriptsRoH.ps1
+    from my repo. When you applied the certificate you can use the scripts with the executionpolicy remotesigned. 
 
 .EXAMPLE
     .\Create-SelfSignedCertificateForCodeSigningRoH.ps1 -CertificateStoreLocation Cert:\CurrentUser\My -CertificateName ExampleCert
