@@ -11,12 +11,12 @@ if ($null -eq $ModPSScriptAnalyzer) {
     Install-Module -Name PSScriptAnalyzer -Force
     Import-Module -Name PSScriptAnalyzer -Force -ErrorAction SilentlyContinue
 }
-$AnalyzingScriptPath = Read-Host {"Fill in the path to your script:"}
+$AnalyzingScriptPath = Read-Host {"Fill in the path to your script: "}
 Set-Location $AnalyzingScriptPath
 ''
 Get-Location | Out-Default
 Get-ChildItem $AnalyzingScriptPath
 ''
-$AnalyzingScript = Read-Host {"Fill in Script you want to analyze:"}
+$AnalyzingScript = Read-Host {"Fill in script you want to analyze: "}
 #Invoke-ScriptAnalyzer -Path $AnalyzingScript -Settings CodeFormatting
 Invoke-ScriptAnalyzer -Path $AnalyzingScript
