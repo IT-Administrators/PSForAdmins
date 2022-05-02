@@ -7,7 +7,7 @@
     check which mailboxes are disabled.
     
 .EXAMPLE
-    . .\GetExchangeMailboxInfos.ps1
+    . .\Get-ExchangeMailboxInfosRoH.ps1
 
     No output. This imports the used functions if you uncomment the function at the end.
 
@@ -59,41 +59,41 @@ param(
     [Parameter(
     ParameterSetName='Mailbox',
     Position=0,
-    HelpMessage='Get all mailboxes (Default=Enabled).')]
+    HelpMessage='Get all mailboxes.')]
     [Switch]$GetAllMailboxes,
 
     [Parameter(
     ParameterSetName='Mailbox',
     Position=0,
-    HelpMessage='Get the specified mailbox (Default=Enabled).')]
+    HelpMessage='Get the specified mailbox.')]
     [String]$GetMailbox,
 
     [Parameter(
     ParameterSetName='Mailbox',
     Position=0,
-    HelpMessage='Get all shared mailboxes (Default=Enabled).')]
+    HelpMessage='Get all shared mailboxes.')]
     [Switch]$GetSharedMailboxes,
 
     [Parameter(
     ParameterSetName='Mailbox',
     Position=1,
-    HelpMessage='Get all permissions for the specified mailbox (Default=Enabled).')]
+    HelpMessage='Get all permissions for the specified mailbox.')]
     [String]$GetSharedMailboxPermissions,
 
     [Parameter(
     ParameterSetName='Mailbox',
     Position=0,
-    HelpMessage='Checks if the specified user has permissions on the a mailbox. (Default=Enabled).')]
+    HelpMessage='Checks if the specified user has permissions on the a mailbox..')]
     [Switch]$GetSharedMailboxPermissionForUser,
 
     [Parameter(
     ParameterSetName='Mailbox',
     Position=0,
-    HelpMessage='Checks which mailboxes are disabled (Default=Enabled).')]
+    HelpMessage='Checks which mailboxes are disabled.')]
     [Switch]$GetDisabledMailboxes
 
 )
-<#It's necessary to check if the switch is used or not. If you don't check the switch it's never used.#>
+
 if($GetAllMailboxes){
     Get-Mailbox -Identity * | Sort-Object Name
 }
@@ -111,33 +111,27 @@ if($GetSharedMailboxPermissions){
 }
 
 if($GetSharedMailboxPermissionForUser){
+    function Get-PermissionForSharedMailboxRoH{
+        param(
+            [Parameter(
+            ParameterSetName='Permission',
+            Mandatory,
+            Position=0,
+            HelpMessage='Fill in name for shared mailbox.')]
+            [String]$SharedMailbox, 
+
+            [Parameter(
+            ParameterSetName='Permission',
+            Mandatory,
+            Position=0,
+            HelpMessage='Fill in user you want permissions for.')]
+            [String]$User
+            )
+    Get-MailboxPermission -Identity *$SharedMailbox* -User "*$User*"
+}
     Get-PermissionForSharedMailboxRoH
 }
 
 if($GetDisabledMailboxes){
     Get-MailboxDatabase | Get-MailboxStatistics | Where { $_.DisconnectReason -eq "Disabled" } | Sort-Object Name | Format-Table DisplayName,Database,DisconnectDate
 }
-
-<#The function underneath is usable but you have to import he module to use the attached switch.
-If you declare the function when you check the switch, the function is used by using the switch but
-not usable if you import the module. #>
-<#
-function Get-PermissionForSharedMailboxRoH{
-    param(
-        [Parameter(
-        ParameterSetName='Permission',
-        Mandatory,
-        Position=0,
-        HelpMessage='Fill in name for shared mailbox')]
-        [String]$SharedMailbox, 
-
-        [Parameter(
-        ParameterSetName='Permission',
-        Mandatory,
-        Position=0,
-        HelpMessage='Fill in user you want permissions for')]
-        [String]$User
-        )
-    Get-MailboxPermission -Identity *$SharedMailbox* -User "*$User*"
-}
-#>
