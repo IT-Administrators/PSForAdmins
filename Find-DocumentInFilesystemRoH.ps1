@@ -30,7 +30,7 @@ param(
     ParameterSetName='FindDocumentInFilesystem',
     Position=0,
     Mandatory,
-    HelpMessage='Find document related to you keyword.')]
+    HelpMessage='Find document related to your keyword.')]
     [String]$FileNameOrExtension,
 
     [Parameter(
