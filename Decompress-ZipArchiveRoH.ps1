@@ -1,9 +1,9 @@
 ﻿<#
 .Synopsis
-   Decompress directory.
+   Decompress zip archive.
 
 .DESCRIPTION
-    This script decompresses a ziparchive using the .Net classes.
+    This script decompresses a zip archive using the .Net classes.
 
 .EXAMPLE
     .\Decompress-ZipArchiveRoH.ps1 -SourceDirectoryArchiveName ~\Downloads\ArchiveTest.zip -DestinationDirectory ~\Downloads
