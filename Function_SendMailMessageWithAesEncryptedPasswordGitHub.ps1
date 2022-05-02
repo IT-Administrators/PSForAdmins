@@ -1,13 +1,13 @@
 ﻿<#
-This generates a Get-Help entry for this script.
-You can use this by "Get-Help .\SkriptName.ps1"
 .SYNOPSIS
     Send mail message function.
+    
 .DESCRIPTION
     This script creates all dependencies you need to send mail messages within scripts.
-    The function CreateAESEncryptedString is needed to create the encryption string we need to send the mail message later.
-    Both variables $MailUserName and $MailPassword are stored in the $MailCredentials variable. The SendMailMessageInScript function 
-    uses the $MailCredentials variable to send a mail messages if you call the function.
+    The function <CreateAESEncryptedString> is needed to create the encryption string we need to send the mail message later.
+    Both variables <$MailUserName> and <$MailPassword> are stored in the <$MailCredentials> variable. The <SendMailMessageInScript> function 
+    uses the <$MailCredentials> variable to send a mail messages if you call the function.
+    
 .NOTES
     Author: IT-Administrators
     Date: 11.01.2022
