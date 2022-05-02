@@ -3,13 +3,12 @@
     Create wsb xml config file.
 
 .DESCRIPTION
-    This script generates a .wsb config file for the windows sandbox application with xml syntax. Please read throught the reference article on the provided link
+    This script generates a .wsb config file for the windows sandbox application with xml syntax. Please read through the reference article on the provided link
     to get information about the used parameters of this script. 
     This configuration provides only one shared folder. You can not share more than one by using this script. I made this adjustment because i never needed more than one folder.
     If you need more than one you need to change the config file like shown on the provided link.
     Every switch is set to a default that suits my configurations if you need other default config you need to change the parameters in the script itself. Not using the switches will set the config to
-    the default values.
-    The sandbox username is <WDAGUtilityAccount> so you need to specify a sandbox parameter like shown below.
+    the default values. The sandbox username is <WDAGUtilityAccount> so you need to specify the <SandboxFolder> parameter like shown below.
     To use your created config double click on your config file or use my Enable-WindowsSandBoxOrStartRoH.ps1 script.
 
     Microsoft refrence link:
