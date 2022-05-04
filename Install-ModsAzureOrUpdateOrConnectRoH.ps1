@@ -3,24 +3,24 @@
     Install or update azure modules.
 
 .DESCRIPTION
-    This script installs or updates the MS azure commandlets. There are also switches to connect
+    This script installs or updates the MS azure modules. There are also switches to connect
     to your azure account, disconnect or show commands for both cmdlets. 
     The Az module is a script with a lot of subcmdlets or subscripts. Use the <SubCmdletsModuleAz> switch
     to show all subcmdlets and the <SubCmdletModuleAz> switch to show subcommandlets of your specified
     az submodule. 
 
 .EXAMPLE
-    .\Install-ModsAzureOrUpdateOrConnect.ps1 -InstallModuleAz
+    .\Install-ModsAzureOrUpdateOrConnectRoH.ps1 -InstallModuleAz
 
     Az module is already installed.
 
 .EXAMPLE
-    .\Install-ModsAzureOrUpdateOrConnect.ps1 -ConnectModuleAz
+    .\Install-ModsAzureOrUpdateOrConnectRoH.ps1 -ConnectModuleAz
 
     Prompt opens for your credentials.
 
 .EXAMPLE
-    .\Install-ModsAzureOrUpdateOrConnect.ps1 -CommandsModuleAzureAD
+    .\Install-ModsAzureOrUpdateOrConnectRoH.ps1 -CommandsModuleAzureAD
 
     CommandType     Name                                               Version    Source
     -----------     ----                                               -------    ------
@@ -33,7 +33,7 @@
     ...
 
 .EXAMPLE
-    .\Install-ModsAzureOrUpdateOrConnect.ps1 -SubCmdletModuleAz AZ.Websites
+    .\Install-ModsAzureOrUpdateOrConnectRoH.ps1 -SubCmdletModuleAz AZ.Websites
 
     CommandType     Name                                               Version    Source
     -----------     ----                                               -------    ------
