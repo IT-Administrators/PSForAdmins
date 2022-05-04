@@ -3,10 +3,10 @@
     Signing scripts.
 
 .DESCRIPTION
-    This script signs every powershell script you want.It is specifically made four codesigning with a code signing script.
+    This script signs every powershell script you want. It is specifically made for codesigning with a code signing certificate.
     You can specify just one script, more than one or a directory. If you specify a directory every script in that directory is signed. 
-    You can not fill in more than one script because signing scripts with more than one certificate doesn't work. 
-    With the -TimeStampServer switch you can use a timestamp server to verify that you certificate was valid when you signed your script. 
+    You can not fill in more than one certificate because signing scripts with more than one certificate doesn't work. 
+    With the <TimeStampServer> switch you can use a timestamp server to verify that your certificate was valid when you signed your script. 
     That helps if you use a self signed certifiate because they run out after one year. If you don't want to use a timestamp server use an empty string <"">.
 
 .EXAMPLE
