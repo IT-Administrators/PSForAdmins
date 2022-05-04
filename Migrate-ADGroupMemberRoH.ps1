@@ -7,7 +7,7 @@
     will occure.
 
 .EXAMPLE
-   .\Migrate-ADGroupMember.ps1 -ADGroupMembersFrom ExampleGroup1 -AddGroupMembersTo ExampleGroup2
+   .\Migrate-ADGroupMemberRoH.ps1 -ADGroupMembersFrom ExampleGroup1 -AddGroupMembersTo ExampleGroup2
 
 .NOTES
     Written and testet in PowerShell 5.1.
