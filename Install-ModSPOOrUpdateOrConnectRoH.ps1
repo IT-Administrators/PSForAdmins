@@ -4,7 +4,7 @@
 
 .DESCRIPTION
     With this script you can install, update or connect to sharepoint online. If you are already connected you can disconnect with this script either.
-    Use the <ShowCommand> switch to see all available commands related to spo module. You can use every switch on their own or all in combination to install, update and than connect.
+    Use the <ShowCommand> switch to see all available commands related to spo module. You can use every switch on their own or all in combinations to install, update and than connect.
 
 .EXAMPLE
     .\Install-ModuleSharepointOnlineOrUpdate.ps1 -InstallModule -ConnectSharepointOnline https://tenant-admin.sharepoint.com -UpdateModule
