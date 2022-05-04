@@ -2,7 +2,7 @@
 Author: IT-Administrators
 Powershell Version: 5.1.19041.1237
 #>
-<#Retrieving tcp connections from the netadapter with status up.
+<#Retrieving tcp connections from the netadapter where status eq up.
 For all tcp connections use <Get-NetTcpConnection>#>
 "Retrieving tcp connections"
 ''
