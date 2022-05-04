@@ -3,7 +3,7 @@
    Get os info of ad computer.
 
 .DESCRIPTION
-   Get is info of all ad computer, only clients or only server. Or get os info of just one computer.
+   This script gets info of all ad computer, only clients or only server. Or you can get os info of just one computer.
 
 .EXAMPLE
    .\Get-OSInfoADComputerRoH.ps1 -GetAllOsADComputer
@@ -56,29 +56,25 @@ param(
     [Parameter(
     ParameterSetName='ADComputer',
     Position=0,
-    HelpMessage='Get operatingsystem informations from all ad computer.'
-    )]
+    HelpMessage='Get operatingsystem informations from all ad computer.')]
     [Switch]$GetAllOsADComputer,
 
     [Parameter(
     ParameterSetName='ADComputer',
     Position=0,
-    HelpMessage='Get operatingsystem information for one computer or all containing your filled in keyword.'
-    )]
+    HelpMessage='Get operatingsystem information for one computer or all containing your filled in keyword.')]
     [String]$GetOsADComputer,
 
     [Parameter(
     ParameterSetName='ADComputer',
     Position=0,
-    HelpMessage='Get ad computer which are not server.'
-    )]
+    HelpMessage='Get ad computer which are not server.')]
     [Switch]$GetOnlyADClients,
 
     [Parameter(
     ParameterSetName='ADComputer',
     Position=0,
-    HelpMessage='Get ad computer which are only server.'
-    )]
+    HelpMessage='Get ad computer which are only server.')]
     [Switch]$GetOnlyADServer
 )
 
