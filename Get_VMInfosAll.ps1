@@ -1,22 +1,29 @@
 ﻿<#
-This generates a Get-Help entry for this script.
-You can use this by "Get-Help .\SkriptName.ps1"
 .SYNOPSIS
     Generate vm information report.
+    
 .DESCRIPTION
     This script collects informations about all installed vms. The first function gets all infomations about all vms. 
     The sub functions are for specified informations related to the machines for example: memory and hard drive infos.
-    You can call the functions by their name. Without specifying the vmname parameter the functions will collect the 
-    specific information for all machines. If you use the vmname switch by filling in a vm name you will only get the informations for
-    the specified machine. Using the savepath parameter on the functions you can set another path. The default path is C:\Temp.
-    If you need the file for just one machine you can use the safepath switch to name the file like the machine you want to get 
+    You can call the functions by their name. Without specifying the <VMName> parameter the functions will collect the 
+    specific information for all machines. If you use the <VMName> switch by filling in a vm name you will only get the informations for
+    the specified machine. Using the <SafePath> parameter on the functions, you can set another path. The default path is C:\Temp.
+    If you need the file for just one machine you can use the <SafePath> switch to name the file like the machine you want to get 
     informations about. 
+    
+    This script only works with hyper-v.
+    
 .PARAMETER SavePath
+
     Enter desired directory path to save
+    
     -SavePath C:\Temp
+    
 .NOTES
-    Author: IT-Administrators
-    Date: 09.12.2021
+    Written and testet in PowerShell 5.1.
+   
+.LINK
+    https://github.com/IT-Administrators/PSForAdmins/tree/PowerShell-5.1
 #>
 param(
     #Location the report will be saved to
