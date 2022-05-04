@@ -49,7 +49,7 @@
 .Example 
     The homedirectory input doesn't need a "\" at the end. Otherwise the homedirectory looks like \\ExampleDomain-File\Data\\UserName.
     
-    .\New-ADUsersFromFileAdvancedRoH.ps1 -ADDomainUserDefaultPW Example1234! -ADDomainUserFile "C:\Temp\ExampleDomainUsers.txt" -NewOUForADUsers TestUsers -ADUserHomeDirectory \\ExampleDomain-File\Data -ADUserLogonScript C:\LogonScripts\LogonScript.bat
+    .\New-ADUsersFromFileAdvancedRoH.ps1 -ADDomainUserDefaultPW Example1234! -ADDomainUserFile "C:\Temp\ExampleDomainUsers.txt" -NewOUForADUsers TestUsers -ADUserHomeDrive H: -ADUserHomeDirectory \\ExampleDomain-File\Data -ADUserLogonScript C:\LogonScripts\LogonScript.bat
 
 .NOTES
     Written and testet in PowerShell 5.1.
