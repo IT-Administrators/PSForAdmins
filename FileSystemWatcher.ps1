@@ -5,7 +5,7 @@
 .DESCRIPTION
     This script implements a filesystemwatcher with logging to a logfile. I prefer the logfile
     because using this with console output interrupts my workflow after every event. Also using a logfile brings other
-    advanteages like. You can filter for string in you logfile to get an even more specific knowledge about what happend on you filesystem.
+    advantages like you can filter for strings in your logfile to get an even more specific knowledge about what happend on your filesystem.
     The logfile is created at ~\Desktop\Fsw.txt. Everytime this script is used the logfile is 
     overwritten, so be careful if you use it. I would recommend copying the logfile to another location after 
     ending the current session. If you only want to monitor your specified directory and not the ones underneath it
@@ -44,15 +44,15 @@
 .EXAMPLE
     Monitoring on powershell core. 
 
-    You need to use the linux related syntax with slashes. Using ~ on parameter <WatchDirectory> will cause an erromessage and monitoring won't start.
+    You need to use the linux related syntax with slashes. Using ~ on parameter <WatchDirectory> will cause an errormessage and monitoring won't start.
 
     .\FileSystemWatcherRoH.ps1 -WatchDirectory /home/ExampleUser/Downloads
     
     FswLog entrys:
-    C:\Users\ExampleUser\Desktop\Test.txt was Created at 29.04.2022 13:31:36
-    C:\Users\ExampleUser\Desktop\Test.txt was Renamed to Test2.txt at 29.04.2022 13:31:36
-    C:\Users\ExampleUser\Desktop\Test.txt was Changed at 29.04.2022 13:32:4
-    C:\Users\ExampleUser\Desktop\Test2.txt was deleted at 29.04.2022 13:33:4
+    /home/ExampleUser/Downloads/Test.txt was Created at 29/04/2022 1:31:36 PM
+    /home/ExampleUser/Downloads/Test.txt was Renamed to Test2.txt at 29/04/2022 1:31:36 PM
+    /home/ExampleUser/Downloads/Test.txt was Changed at 29/04/2022 1:32:4 PM
+    /home/ExampleUser/Downloads/Test2.txt was deleted at 29/04/2022 1:33:4 PM
 
 .NOTES
     Written and testet in PowerShell 5.1.
