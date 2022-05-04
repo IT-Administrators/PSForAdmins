@@ -3,7 +3,7 @@
     This script get's the last logon of all ad users.
 
 .DESCRIPTION
-    This script gets the last logon date auf every ad user or a specific ad user
+    This script gets the last logon date auf every ad user or a specific ad user.
     The date is converted to human readable format.
 
 .EXAMPLE
