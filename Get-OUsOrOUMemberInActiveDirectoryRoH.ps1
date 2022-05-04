@@ -27,7 +27,7 @@
     Example.local/Example/Computer/Server-AutoUpdate                OU=Server-AutoUpdate,OU=Computer,OU=Example,DC=Example,DC=local
 
 .EXAMPLE
-    .\Get-OUsOrOUMemberInActiveDirectoryRoH.ps1 -GetOUMember "OU=OrdnerGruppen,OU=Benutzergruppen,OU=Example,DC=Example,DC=local"
+    .\Get-OUsOrOUMemberInActiveDirectoryRoH.ps1 -GetOUMember "OU=DirectoryGroups,OU=UserGroups,OU=Example,DC=Example,DC=local"
 
     SamAccountName                                                
     --------------                                                
