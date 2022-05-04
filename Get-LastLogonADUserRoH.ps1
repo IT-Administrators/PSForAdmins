@@ -7,7 +7,7 @@
     The date is converted to human readable format.
 
 .EXAMPLE
-    .\Get-ADUserLastLogonRoH.ps1 -LastLogonAll 
+    .\Get-LastLogonADUserRoH.ps1 -LastLogonAll 
 
     Name                    LastLogon
     ----                    ---------
@@ -15,7 +15,7 @@
     ...                     ...
 
 .EXAMPLE
-   .\Get-ADUserLastLogonRoH.ps1 -LastLogonForSpecifiedUser Example
+   .\Get-LastLogonADUserRoH.ps1 -LastLogonForSpecifiedUser Example
 
     Name                LastLogon
     ----                ---------
@@ -23,7 +23,7 @@
     adm-ExampleUser     09.02.2022 15:13:52
 
 .NOTES
-    This script is written and tested in PowerShell 5.1 so i can't guarantee its working on PowerShell 7.
+    This script is written and tested in PowerShell 5.1.
 
 .LINK
     https://github.com/IT-Administrators/PSForAdmins/tree/PowerShell-5.1
