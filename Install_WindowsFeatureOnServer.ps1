@@ -9,7 +9,7 @@ Get-WindowsFeature -ComputerName $env:COMPUTERNAME
 ''
 $InstallWFeature = Read-Host{"Fill in feature name of the feature you want to install"}
 ''
-$Choice1 = Read-Host{"Do you want ot install your specified feature with all subfeatures? [y] yes or no [n]"}
+$Choice1 = Read-Host{"Do you want to install your specified feature with all subfeatures? [y] yes or no [n]"}
 if($Choice1 -eq "y"){
     #Install specified feature with all subfeatures
     Install-WindowsFeature -Name $InstallWFeature -IncludeAllSubFeature
