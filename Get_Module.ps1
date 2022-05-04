@@ -10,7 +10,7 @@ Get-Module -ListAvailable
 ''
 $Choice1 = Read-Host{"Do you want to find a specific module [y] yes or [n] no"}
 ''
-#Iterates through the repository for the specified keyword and returns every module containing the keyword
+#Iterates through the repository for the specified keyword and returns every module containing the keyword.
 if($Choice1 -eq "y"){
     $FindModule = Read-Host{"Fill in Module or part of the modul you want to look for"}
     Find-Module -Name "*$FindModule*" | Select-Object Name, Description, Author
