@@ -3,9 +3,9 @@
     Get all ou's in your active directory.
 
 .DESCRIPTION
-    With this script you can get all ous in your active directory with their canonical name and their distingguished name.
+    With this script you can get all ou's in your active directory with their canonical name and their distinguished name.
     You can also filter for one ou and get the members of one ou. When you use the <GetOUMember> switch you have to use the 
-    distinguished name of the ou like shown in the example.
+    distinguished name of the ou within quotes like shown in the example.
 
 .EXAMPLE
     .\Get-OUsOrOUMemberInActiveDirectoryRoH.ps1 -GetAllOUsInAD
@@ -34,7 +34,7 @@
     Sales                                    
     HumanRessources                           
     IT                            
-    Engineers
+    Marketing
 
 .NOTES
    Written and testet in PowerShell 5.1.
