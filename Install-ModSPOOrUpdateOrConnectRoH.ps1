@@ -17,7 +17,7 @@
 .LINK
     https://github.com/IT-Administrators/PSForAdmins/tree/PowerShell-5.1
 #>
-[CmdletBinding(DefaultParameterSetName='InstallSharepointOnline', 
+[CmdletBinding(DefaultParameterSetName='SharepointOnline', 
                SupportsShouldProcess=$true,
                PositionalBinding=$true)]
 param(
