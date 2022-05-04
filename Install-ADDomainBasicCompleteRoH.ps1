@@ -3,22 +3,22 @@
    Install active directory domain.
 
 .DESCRIPTION
-   This script completely install an active directory domain. Before you use that script you have to assign a static ipaddress.
-   As dns server you can use either the assigned ip address or the loopback address. While the installatin proceeds you will be 
-   prompted for a administrator password. After inserting the password the server is going to restart.
+   This script completely installs an active directory domain. Before you use that script you have to assign a static ipaddress.
+   As dns server you can use either the assigned ip address or the loopback address. While the installation proceeds you will be 
+   prompted for an administrator password. After inserting the password the server is going to restart.
 
 .EXAMPLE
-   Installing the active directory services module. This switch will do a precheck if the module is installed and if it isn't its
+   Installing the active directory services module. This switch will do a precheck if the module is installed and if it isn't it's
    going to be installed.
    
-   .\Install-ADDomainRoH.ps1 -ADDomainDomainServices 
+   .\Install-ADDomainBasicCompleteRoH.ps1 -ADDomainDomainServices 
 
     Success Restart Needed Exit Code      Feature Result                               
     ------- -------------- ---------      --------------                               
     True    No             NoChangeNeeded {}            
 
 .EXAMPLE
-    Installing the forest an the active directory domain. For the domain mode you will be prompted with every possible option.
+    Installing the forest and the active directory domain. For the domain mode you will be prompted with every possible option.
 
    .\Install-ADDomainRoH.ps1 -InstallDomain -ADDomainName ExampleDomain.com -ADDomainMode Win2012R2
 
