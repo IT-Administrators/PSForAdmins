@@ -2,7 +2,7 @@
 Author: IT-Administrators
 Powershell Version: 5.1.19041.1237
 #>
-<#This script receives the windows product key. There are also comamnd for cmd and a vbs code to get the windows key.#>
+<#This script retreives the windows product key. There are also commands for cmd and a vbs code to get the windows key.#>
 "Windows product key"
 ''
 (Get-WmiObject -query 'select * from SoftwareLicensingService‘).OA3xOriginalProductKey
