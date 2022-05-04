@@ -7,7 +7,7 @@
     Use the <ShowCommand> switch to see all available commands related to spo module. You can use every switch on their own or all in combinations to install, update and than connect.
 
 .EXAMPLE
-    .\Install-ModuleSharepointOnlineOrUpdate.ps1 -InstallModule -ConnectSharepointOnline https://tenant-admin.sharepoint.com -UpdateModule
+    .\Install-ModSPOOrUpdateOrConnectRoH.ps1 -InstallModule -ConnectSharepointOnline https://tenant-admin.sharepoint.com -UpdateModule
 
     Verbose messages than the login prompt. 
 
