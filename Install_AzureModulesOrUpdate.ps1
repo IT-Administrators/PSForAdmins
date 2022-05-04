@@ -5,7 +5,7 @@ Powershell Version: 5.1.19041.1237
 "Installing azure modules:  Az and Azure active directory for graph"
 ''
 <#Checking for module and and installing it if it is not present. If you want to install it for every user you have to change the
-scope to AllUsers. Installing this for the current user doesn't require admin privileges.#>
+<Scope> to AllUsers. Installing this for the current user doesn't require admin privileges.#>
 #Az module
 $ModAz = Get-Module -ListAvailable -Name Az
 if ($null -eq $ModAz) {
