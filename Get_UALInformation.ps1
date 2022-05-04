@@ -6,7 +6,8 @@ Powershell Version: 5.1.19041.1237
 At some situations even layer 2 devices and their communication with the domain controller can be logged.
 This script retrieves all informations on users, servers and devices on your network.
 Be careful with these informations they can produce high privacy issues because you can see literally everything.#>
-#Activate user acces logging with Enable-UAL. After activating ual it takes some time to get information.
+
+#Activate user acces logging with <Enable-UAL>. After activating ual it takes some time to get information.
 "Get user access logging information"
 ''
 $UalPath = "C:\Temp\"
@@ -22,5 +23,5 @@ if($UalStatus.Enabled -eq "True"){
     Get-UalDNS | Sort-Object LastSeen | Export-Csv $UalPath"UalDNS.csv" -Delimiter ";" -NoTypeInformation
 }
 else{
-    Write-Output "User access logging is not enabled. Please enable user access logging with Enable-Ual."
+    Write-Output "User access logging is not enabled. Please enable user access logging with <Enable-Ual>."
 }
