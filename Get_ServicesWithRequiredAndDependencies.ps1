@@ -5,7 +5,7 @@ Powershell Version: 5.1.19041.1237
 "Get required services and dependencies for each service"
 ''
 <#Second choice can be helpful if you already know the service you need information for otherweise it shows
-alls services.#>
+all services.#>
 $Choice1 = Read-Host{"Do you want to look for all services [a] or only one service by name [n] or olny one service by displayname [d]"}
 ''
 if($Choice1 -eq "n"){
