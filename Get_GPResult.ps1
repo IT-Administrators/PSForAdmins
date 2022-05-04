@@ -3,7 +3,7 @@ Author: IT-Administrators
 Powershell Version: 5.1.19041.1237
 #>
 <#This script returns a gpresult object for the specified user or client.
-The report is exported to html. To change save path or file name you have to change the 
+The report is exported to html. To change the save path or file name you have to change the 
 $Path variable.#>
 "GPO results"
 ''
