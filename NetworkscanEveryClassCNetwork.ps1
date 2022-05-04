@@ -14,8 +14,8 @@ $ActualIPAddress.IPAddress | ForEach-Object {
                 [System.Net.NetworkInformation.Ping]::new().SendPingAsync("$netip.$_","5") | Out-Null
     }
 }
-#warte bis arp-cache: complete
+#wait for arp-cache: complete
 while ($(Get-NetNeighbor).state -eq "incomplete") {Write-Output "waiting";timeout 1 | Out-Null}
-#Ergebnis anzeigen
+#Show results
 #Get-NetNeighbor | Where-Object -Property State -ne Unreachable | Where-Object -Property State -ne Permanent | Out-GridView
 Get-NetNeighbor -State Reachable
