@@ -1,6 +1,7 @@
-PowerShell scripts and modules for admins.
+Batch scripts for admins.
 
-I'm using powershell and i'm interested in improving my powershell skills. 
-I'm working as an IT-Admin, so working with powershell is daily business.  
+Most of the time i'm using Powershell, but sometimes i need to run scripts from within a batchfile or cmd because i can't change the executionpolicy.
 
-Feel free to contribute with tips, scripts or even modules. 
+So i will post here some helpful batch scripts. 
+
+Fell free to contribute with tips and tricks.
