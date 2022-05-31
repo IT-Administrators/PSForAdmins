@@ -56,6 +56,7 @@ if($InstallModule){
     if($null -eq $IntuneMod){
         Write-Verbose "Intune mdoule is not present, attempting to install it." -Verbose
         Install-Module -Name $IntuneManagementModule -Scope CurrentUser -Force -Verbose
+        Import-Module -Name $IntuneManagementModule -Scope CurrentUser -Force
         Get-Module -Name $IntuneManagementModule -ListAvailable | Select Name,Version
     }
     else{
@@ -63,6 +64,7 @@ if($InstallModule){
     }
 }
 if($UpdateModule){
+    Import-Module -Name $IntuneManagementModule -Scope CurrentUser -Force
     Update-Module -Name $IntuneManagementModule -Verbose
 }
 if($ConnectToIntuneOnline){
@@ -71,6 +73,7 @@ if($ConnectToIntuneOnline){
         break;
     }
     else{
+        Import-Module -Name $IntuneManagementModule -Scope CurrentUser -Force
         Update-MSGraphEnvironment -AuthUrl "Https://login.windows.net/$TenantID"
         Connect-MSGraph
     }
