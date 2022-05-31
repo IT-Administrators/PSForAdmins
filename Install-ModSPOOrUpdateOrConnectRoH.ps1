@@ -30,25 +30,25 @@ param(
     [Parameter(
     ParameterSetName='SharepointOnline',
     Position=1,
-    HelpMessage='Install sharepoint online module.')]
+    HelpMessage='Update sharepoint online module.')]
     [Switch]$UpdateModule,
 
     [Parameter(
     ParameterSetName='SharepointOnline',
     Position=2,
-    HelpMessage='Install sharepoint online module.')]
+    HelpMessage='Connect to sharepoint online module.')]
     [String]$ConnectSharepointOnline,
 
     [Parameter(
     ParameterSetName='DisconnectSharepointOnline',
     Position=0,
-    HelpMessage='Disconnect sharepoint online.')]
+    HelpMessage='Disconnect from sharepoint online.')]
     [Switch]$DisconnectSharepointOnline,
 
     [Parameter(
     ParameterSetName='SharepointOnline',
     Position=3,
-    HelpMessage='Install sharepoint online module.')]
+    HelpMessage='Get commands of sharepoint online module.')]
     [Switch]$CommandsSharepointOnline
 )
 
