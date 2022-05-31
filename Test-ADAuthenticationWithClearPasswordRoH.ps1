@@ -11,7 +11,7 @@
     It's not recommended to use this kind of plaintext validation within a script because of this security issue. 
 
 .EXAMPLE
-    Test-ADAuthenticationWithClearPasswordRoH.ps1 -ADUserName Domain\Example.User -ADUserPassword ExamplePassword
+    .\Test-ADAuthenticationWithClearPasswordRoH.ps1 -ADUserName Domain\Example.User -ADUserPassword ExamplePassword
 
     Domain\Example.User: Logon credentials are correct!
 
