@@ -1,4 +1,4 @@
-﻿<#
+<#
 .Synopsis
     Take screenshot with powershell.
 
@@ -60,6 +60,18 @@ param(
 
 if($TakeScreenshots){
 
+    #Build date format
+    $Year = (Get-Date).Year
+    $Month = (Get-Date).Month
+        if($Month -lt 10){
+            $Month = "0$Month"
+        }
+    $Day = (Get-Date).Day
+        if($Day -lt 10){
+            $Day = "0$Day"
+        }
+    $TodayDate = "$Year$Month$Day"
+
     $CheckTodayDir = Test-Path -Path $SavePath\$TodayDate
     if($CheckTodayDir -ne "True"){
         New-Item -Path $SavePath\$TodayDate -ItemType Directory -ErrorAction SilentlyContinue -Force
@@ -72,18 +84,6 @@ if($TakeScreenshots){
     while($true)
     {
         Start-Sleep -Seconds $Interval
-
-        #Build date format
-        $Year = (Get-Date).Year
-        $Month = (Get-Date).Month
-            if($Month -lt 10){
-                $Month = "0$Month"
-            }
-        $Day = (Get-Date).Day
-            if($Day -lt 10){
-                $Day = "0$Day"
-            }
-        $TodayDate = "$Year$Month$Day"
 
         #Build time format
         $Hour = (Get-Date).Hour
