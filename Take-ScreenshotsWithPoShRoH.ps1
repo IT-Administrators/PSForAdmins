@@ -83,8 +83,6 @@ if($TakeScreenshots){
 
     while($true)
     {
-        Start-Sleep -Seconds $Interval
-
         #Build time format
         $Hour = (Get-Date).Hour
             if($Hour -lt 10){
@@ -113,5 +111,7 @@ if($TakeScreenshots){
         $GraphicsFromBmp.Dispose()
         #Save screenshot.
         $NewBmp.Save("$SavePath\$TodayDate\$TodayTime.$ScreenshotType")
+        
+        Start-Sleep -Seconds $Interval
     }
 }
