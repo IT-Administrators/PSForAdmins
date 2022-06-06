@@ -5,7 +5,7 @@
 .DESCRIPTION
     This script takes screenshots of your screen in the specified interval. You can change the interval by changing the <Interval> parameter. By default a screenshot is taken
     every second. You can also choose the filetype with the <ScreenShotType> parameter, default is .bmp. Saving the screenshots as .bmp gives the opportunity to change them with
-    powershell afterwards. The default savepath is the picatures directory under the user directory but you can change this as well will the <SavePath> parameter.
+    powershell afterwards. The default savepath is the pictures directory under the user directory but you can change this as well will the <SavePath> parameter.
     The screenshots are taken as long as you don't close the session. 
 
 .EXAMPLE
