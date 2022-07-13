@@ -130,7 +130,7 @@ $ModAz = Get-Module -Name Az
 $ModAzureAD = Get-Module -ListAvailable -Name AzureAD
 if($InstallModuleAz){
     if ($null -eq $ModAz) {
-	    Write-Verbose "Az module is not present, attempting to install it." -Verbose
+	Write-Verbose "Az module is not present, attempting to install it." -Verbose
         Install-Module -Name Az -AllowClobber -Scope CurrentUser -Force
         Import-Module -Name Az -Force -ErrorAction SilentlyContinue
     }
