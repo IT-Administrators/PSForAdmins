@@ -47,7 +47,7 @@ param(
     [Switch]$ConnectExchangeOnline,
 
     [Parameter(
-    ParameterSetName='ExchangeOnline',
+    ParameterSetName='DisconnectExchangeOnline',
     Position=0,
     HelpMessage='Disconnect from exchange online.')]
     [Switch]$DisconnectExchangeOnline,
