@@ -12,11 +12,13 @@
     Verbose messages.
 
 .EXAMPLE
-    .\Install-ModMicrosoftGraphPowerShellRoH.ps1 -ConnectMicrosoftGraph
+    .\Install-ModMicrosoftGraphPowerShellRoH.ps1 -ConnectMicrosoftGraph "User.Read.All","Group.ReadWrite.All"
 
     Prompt than Message. 
 
     Welcome to Microsoft Graph!
+    
+    You must connect with the right permissions for the cmdlets to use them.
 
 .EXAMPLE
     .\Install-ModMicrosoftGraphPowerShellRoH.ps1 -FindPermission "*user*"
@@ -101,7 +103,7 @@ if($FindPermission){
     Find-MgGraphCommand -Command $FindPermission | Select-Object Command, Permissions
 }
 if($ConnectMicrosoftGraph){
-    Connect-MgGraph
+    Connect-MgGraph -Scopes $ConnectMicrosoftGraph
 }
 if($DisconnectMicrosoftGraph){
     Disconnect-MgGraph
