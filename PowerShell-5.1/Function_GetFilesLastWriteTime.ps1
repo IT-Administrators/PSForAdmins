@@ -16,7 +16,7 @@
 .PARAMETER Gui
     Creates a gui interface.
 
-.PARAMETER YearToReport
+.PARAMETER YearsToReport
     Specifies the years to go back.
 
 .PARAMETET Directory
