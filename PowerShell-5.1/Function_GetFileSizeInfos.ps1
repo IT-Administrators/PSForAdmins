@@ -12,7 +12,9 @@
 
     Output:
 
-    100,00 GB
+        Sum (GB)
+        --------
+    7,2626953125
 
 .EXAMPLE
     Get the largest file in directory.
