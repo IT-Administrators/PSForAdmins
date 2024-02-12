@@ -19,7 +19,7 @@
 .PARAMETER YearsToReport
     Specifies the years to go back.
 
-.PARAMETET Directory
+.PARAMETER Directory
     Directory that will be checked. Default is the userprofile.
 
 .PARAMETER ReportPath
