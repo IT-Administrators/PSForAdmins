@@ -78,7 +78,7 @@ function Connect-SPOTenantRoH {
     )
     
     if ($ModernAuth) {
-        Connect-SPOService -Url $SPOTenantUrl -ModernAuth
+        Connect-SPOService -Url $SPOTenantUrl -ModernAuth $true
     }
     else {
         Connect-SPOService -Url $SPOTenantUrl -Credential $SPOTenantCredential
