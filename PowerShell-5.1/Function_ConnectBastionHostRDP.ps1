@@ -80,7 +80,7 @@ function Connect-AzureBastionHostRDP {
         $Modules = @("az","az.resourcegraph")
         # Verify that modules are installed.
         foreach($module in $Modules){
-            $ModuleCheck = Get-Module -Name $module
+            $ModuleCheck = Get-Module -Name $module -ListAvailable -All
             if ($ModuleCheck -ne $true){
                 Find-Module -Name $module -Verbose | Install-Module -Scope CurrentUser -Verbose -Force
                 Import-Module -Name $module -Verbose
