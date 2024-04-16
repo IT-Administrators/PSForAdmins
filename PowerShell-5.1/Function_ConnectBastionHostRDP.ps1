@@ -1,4 +1,4 @@
-﻿<#
+<#
 .Synopsis
     Connects via RDP to a bastion host
 
@@ -108,7 +108,8 @@ function Connect-AzureBastionHostRDP {
             }
             else {
                 # Connect to the bastion sub in the correct tenant.
-                Select-AzSubscription $BastionSubscriptionId -Tenant  $TenantId | Out-Null
+                Set-AzContext -SubscriptionId $BastionSubscriptionId -Tenant $TenantId 
+                # Select-AzSubscription -SubscriptionId $BastionSubscriptionId -Tenant $TenantId | Out-Null
                 # Get azure access token.
                 $AccessToken = (Get-AzAccessToken).Token
                 if (!([string]::IsNullOrEmpty($AccessToken))) {
