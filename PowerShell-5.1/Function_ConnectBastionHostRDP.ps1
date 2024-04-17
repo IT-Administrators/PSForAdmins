@@ -82,12 +82,12 @@ function Connect-AzureBastionHostRDP {
         foreach($module in $Modules){
             $ModuleCheck = Get-Module -Name $module -ListAvailable -All
             if ($ModuleCheck -ne $true){
-                Find-Module -Name $module -Verbose | Install-Module -Scope CurrentUser -Verbose -Force
-                Import-Module -Name $module -Verbose
+                Find-Module -Name $module -Verbose | Install-Module -Scope CurrentUser -Verbose -Force -Confirm:$false
+                Import-Module -Name $module -Scope Local -Verbose
             }
             else{
                 Update-Module -Name $module -Verbose
-                Import-Module -Name $module -Verbose
+                Import-Module -Name $module -Scope Local -Verbose
             }
         }
     }
