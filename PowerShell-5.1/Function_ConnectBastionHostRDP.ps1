@@ -6,6 +6,7 @@
     Connect via RDP to a bastion host located inside your azure.
 
     Use the <CheckPrerequisites> parameter to install or update the required modules.
+
 .EXAMPLE
     Connect to bastion host via RDP.
 
@@ -24,6 +25,11 @@
     VERBOSE: Deleting the RDP file after use.
     VERBOSE: Performing the operation "Remove File" on target "%userprofile%\Desktop\ExampleVM-2024-04-16@140441.rdp".
     VERBOSE: Deleted %userprofile%\Desktop\ExampleVM-2024-04-16@140441.rdp.
+
+.EXAMPLE
+    Connect to bastion host with all monitors used.
+
+    Connect-AzureBastionHostRDP -AzureVmName "ExampleVM" -BastionHostName "Example-Bastion" -TenantId "xxxxxxxx" -BastionSubscriptionId "xxxxxxxx" -BastionResoureGroup "ExampleDomain-RSG-Bastion" -UseMultimonitor
 
 .NOTES
     Written and testet in PowerShell 5.1.
@@ -70,6 +76,12 @@ function Connect-AzureBastionHostRDP {
         [string]$BastionResoureGroup,
 
         [Parameter(
+        ParameterSetName='ConnectAzureBastionHost',
+        Position=0,
+        HelpMessage='Bastion resource group.')]
+        [switch]$UseMultimonitor,
+
+        [Parameter(
         ParameterSetName='ConnectAzureBastionHostModuleCheck',
         Position=0,
         HelpMessage='Required modules will be installed or updated.')]
@@ -77,6 +89,7 @@ function Connect-AzureBastionHostRDP {
     )
 
     if ($CheckPrerequisites){
+        # Necessary modules for the RDP connection.
         $Modules = @("Az.accounts","Az.ResourceGraph","Az.Network")
         # Verify that modules are installed.
         foreach($module in $Modules){
@@ -133,7 +146,6 @@ function Connect-AzureBastionHostRDP {
                                 "Authorization"   = "Bearer $($AccessToken)"
                                 "Accept"          = "*/*"
                                 "Accept-Encoding" = "gzip, deflate, br"
-                                #"Connection" = "keep-alive" #keep-alive and close not supported with PoSh 5.1 
                                 "Content-Type"    = "application/json"
                             }
                             # Create RDP file informations.
@@ -159,11 +171,18 @@ function Connect-AzureBastionHostRDP {
                         $ProgressPreference = 'Continue'
                         
                         # Check if RDP config file exist and if yes start it.
-                        if (Test-Path $RdpPathAndFileName -PathType leaf) {
+                        if (Test-Path $RdpPathAndFileName -PathType Leaf) {
+                            # Change from multimonitor to single.
+                            if($UseMultimonitor -eq $false){
+                                $RdpFileContent = Get-Content -Path $RdpPathAndFileName -Raw
+                                $RdpFileContent.Replace("use multimon:i:1","use multimon:i:0") | Add-Content -Path $RdpPathAndFileName -Force -Verbose
+                            }
+                            
                             Start-Process $RdpPathAndFileName -Wait
-                            Write-Verbose -Message "Deleting the RDP file after use."
+                            Write-Verbose -Message "Deleting the RDP file after use." -Verbose
+                            
                             Remove-Item $RdpPathAndFileName -Verbose
-                            Write-Verbose -Message "Deleted $RdpPathAndFileName."
+                            Write-Verbose -Message "Deleted $RdpPathAndFileName." -Verbose
                         }
                         else {
                             Write-Verbose -Message "The RDP file was not found on your desktop." -Verbose
