@@ -32,7 +32,7 @@
     Connect-AzureBastionHostRDP -AzureVmName "ExampleVM" -BastionHostName "Example-Bastion" -TenantId "xxxxxxxx" -BastionSubscriptionId "xxxxxxxx" -BastionResourceGroup "ExampleDomain-RSG-Bastion" -UseMultimonitor
 
 .NOTES
-    Written and testet in PowerShell 5.1.
+    Written and tested in PowerShell 5.1.
 
 .LINK
     https://github.com/IT-Administrators/PSForAdmins/tree/main/PowerShell-5.1
@@ -117,7 +117,7 @@ function Connect-AzureBastionHostRDP {
             # Check if machine is running otherwise exit.
             if ($VMToConnectTo.PowerState -eq 'PowerState/deallocated') {
                 $User = [Environment]::UserName
-                Write-Verbose -Message "The Vm is not running. Please start the vm." -Verbose
+                Write-Verbose -Message "The VM is not running. Please start the VM." -Verbose
             }
             else {
                 # Connect to the bastion sub in the correct tenant.
@@ -131,7 +131,7 @@ function Connect-AzureBastionHostRDP {
                         $Bastion = Get-AzBastion -ResourceGroupName $BastionResourceGroup -Name $BastionHostName
                         if ($null -ne $Bastion) {
                             Write-Verbose -Message "Connected to Bastion $($Bastion.Name)" -Verbose
-                            Write-Verbose -Message "Creating RDD profile." -Verbose
+                            Write-Verbose -Message "Creating RDP profile." -Verbose
                             
                             # Create endpoint (url) informations. This is later used to create the rdp file.
                             $TargetResourceId = $VmResourceId
