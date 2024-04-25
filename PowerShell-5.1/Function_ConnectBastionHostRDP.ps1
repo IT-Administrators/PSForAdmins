@@ -10,7 +10,7 @@
 .EXAMPLE
     Connect to bastion host via RDP.
 
-    Connect-AzureBastionHostRDP -AzureVmName "ExampleVM" -BastionHostName "Example-Bastion" -TenantId "xxxxxxxx" -BastionSubscriptionId "xxxxxxxx" -BastionResoureGroup "ExampleDomain-RSG-Bastion" -Verbose
+    Connect-AzureBastionHostRDP -AzureVmName "ExampleVM" -BastionHostName "Example-Bastion" -TenantId "xxxxxxxx" -BastionSubscriptionId "xxxxxxxx" -BastionResourceGroup "ExampleDomain-RSG-Bastion" -Verbose
     
     Output:
 
@@ -29,7 +29,7 @@
 .EXAMPLE
     Connect to bastion host with all monitors used.
 
-    Connect-AzureBastionHostRDP -AzureVmName "ExampleVM" -BastionHostName "Example-Bastion" -TenantId "xxxxxxxx" -BastionSubscriptionId "xxxxxxxx" -BastionResoureGroup "ExampleDomain-RSG-Bastion" -UseMultimonitor
+    Connect-AzureBastionHostRDP -AzureVmName "ExampleVM" -BastionHostName "Example-Bastion" -TenantId "xxxxxxxx" -BastionSubscriptionId "xxxxxxxx" -BastionResourceGroup "ExampleDomain-RSG-Bastion" -UseMultimonitor
 
 .NOTES
     Written and testet in PowerShell 5.1.
@@ -73,12 +73,12 @@ function Connect-AzureBastionHostRDP {
         ParameterSetName='ConnectAzureBastionHost',
         Position=0,
         HelpMessage='Bastion resource group.')]
-        [string]$BastionResoureGroup,
+        [string]$BastionResourceGroup,
 
         [Parameter(
         ParameterSetName='ConnectAzureBastionHost',
         Position=0,
-        HelpMessage='Bastion resource group.')]
+        HelpMessage='User multimonitor or single.')]
         [switch]$UseMultimonitor,
 
         [Parameter(
@@ -128,7 +128,7 @@ function Connect-AzureBastionHostRDP {
                 if (!([string]::IsNullOrEmpty($AccessToken))) {
                     try {
                         # Get bastion information.
-                        $Bastion = Get-AzBastion -ResourceGroupName $BastionResoureGroup -Name $BastionHostName
+                        $Bastion = Get-AzBastion -ResourceGroupName $BastionResourceGroup -Name $BastionHostName
                         if ($null -ne $Bastion) {
                             Write-Verbose -Message "Connected to Bastion $($Bastion.Name)" -Verbose
                             Write-Verbose -Message "Creating RDD profile." -Verbose
