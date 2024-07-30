@@ -45,7 +45,6 @@ function Get-FireWallStatusRoH {
         [Parameter(
         ParameterSetName='CheckFirewallStatus',
         Position=0,
-        Mandatory,
         HelpMessage='Check Firewall status.')]
         [String[]]$ComputerName,
         
@@ -58,7 +57,7 @@ function Get-FireWallStatusRoH {
         [System.Management.Automation.Credential()]
         $Credentials = [System.Management.Automation.PSCredential]::Empty
     )
-    $PSSession = New-PSSession -Name "FirewallStatusCheck" -ComputerName $ComputerName -Credential $Creds -Verbose
+    $PSSession = New-PSSession -Name "FirewallStatusCheck" -ComputerName $ComputerName -Credential $Credentials -Verbose
     $FWStatusCheckRes = Invoke-Command -Session $PSSession -ScriptBlock {
         Get-NetFirewallProfile -All | Select-Object Name,Enabled
     }
