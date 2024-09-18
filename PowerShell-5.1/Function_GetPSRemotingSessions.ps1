@@ -67,7 +67,10 @@ function Get-PSRemotingSessionRoH {
         ParameterSetName='GetWinRMSession',
         Position=0,
         HelpMessage='Credentials.')]
-        [System.Management.Automation.PSCredential]$Credential
+        [ValidateNotNull()]
+        [System.Management.Automation.PSCredential] 
+        [System.Management.Automation.Credential()] 
+        $Credential = [System.Management.Automation.PSCredential]::Empty
     )
 
     if(!$Credential){

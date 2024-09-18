@@ -61,7 +61,10 @@ function Get-LocalAdminsOnComputerRoH {
         ParameterSetName='GetLocalAdmin',
         Position=1,
         HelpMessage='Credentials.')]
-        [PSCredential]$Credentials
+        [ValidateNotNull()]
+        [System.Management.Automation.PSCredential] 
+        [System.Management.Automation.Credential()] 
+        $Credentials = [System.Management.Automation.PSCredential]::Empty
     )
 
     if($ComputerName -eq $env:COMPUTERNAME){
