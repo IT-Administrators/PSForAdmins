@@ -143,7 +143,10 @@ function Get-PSRemotingSessionProcessRoH {
         ParameterSetName='GetWinRMSession',
         Position=0,
         HelpMessage='Credentials.')]
-        [System.Management.Automation.PSCredential]$Credential
+        [ValidateNotNull()]
+        [System.Management.Automation.PSCredential] 
+        [System.Management.Automation.Credential()] 
+        $Credential = [System.Management.Automation.PSCredential]::Empty
     )
     if ($Computername -eq $env:COMPUTERNAME){
         $CurrentPrincipal = New-Object Security.Principal.WindowsPrincipal([Security.Principal.WindowsIdentity]::GetCurrent())
