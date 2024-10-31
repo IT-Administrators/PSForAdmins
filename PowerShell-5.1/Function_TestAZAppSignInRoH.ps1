@@ -68,12 +68,12 @@ function Test-AZAppSignInRoH {
     $TokenEndpoint = "https://login.microsoftonline.com/$TenantID/oauth2/v2.0/token"
 
     $Body = @{
-    client_id     = $ClientID
-    scope         = $Scope
-    client_secret = $ClientSecret
-    grant_type    = "password"
-    username      = $UserName
-    password      = $Password
+        client_id     = $ClientID
+        scope         = $Scope
+        client_secret = $ClientSecret
+        grant_type    = "password"
+        username      = $UserName
+        password      = $Password
     }
 
     $WebResponse = Invoke-RestMethod -Method Post -Uri $tokenEndpoint -ContentType "application/x-www-form-urlencoded" -Body $body
