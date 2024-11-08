@@ -8,7 +8,7 @@
 .EXAMPLE
     Get openid config of specified domain.
 
-    Get-OpenIDConfigRoH -Domain shell.com
+    Get-OpenIDConfigRoH -Domain ExampleDomain.com
 
     Output:
 
