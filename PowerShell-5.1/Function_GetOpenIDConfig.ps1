@@ -54,11 +54,26 @@ function Get-OpenIDConfigRoH {
         ParameterSetName='OpenIDConfig',
         Position=0,
         HelpMessage='Domain name.')]
-        [String]$Domain
+        [String]$Domain,
+
+        [Parameter(
+        ParameterSetName='OpenIDConfigCustomUrl',
+        Position=0,
+        HelpMessage='OpenID custom url.')]
+        [String]$CustomUri
     )
-    # Get openid configuration.
-    $Uri = "https://login.microsoftonline.com/$($Domain)/.well-known/openid-configuration"
-    $RestResult = Invoke-RestMethod -Method Get -UseBasicParsing -Uri $Uri
-    # Return request result.
-    $RestResult
+
+    if ($Domain) {
+        # Get openid configuration.
+        $Uri = "https://login.microsoftonline.com/$($Domain)/.well-known/openid-configuration"
+        $RestResult = Invoke-RestMethod -Method Get -UseBasicParsing -Uri $Uri
+        # Return request result.
+        $RestResult
+    }
+    elseif($CustomUri) {
+        # Get openid configuration.
+        $RestResult = Invoke-RestMethod -Method Get -UseBasicParsing -Uri $CustomUri
+        # Return request result.
+        $RestResult
+    }
 }
