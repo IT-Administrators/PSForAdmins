@@ -1,4 +1,4 @@
-﻿function Get-JWTTokenInfos {
+﻿function Get-JWTokenInfos {
 <#
 .Synopsis
     Get all informations of JWT.
@@ -9,7 +9,7 @@
 .EXAMPLE
     Get all infos for specified token.
 
-    Get-JWTTokenInfos -JWTToken $token
+    Get-JWTokenInfos -JWToken $token
 
     Output:
 
@@ -27,18 +27,18 @@
 .LINK
     https://github.com/IT-Administrators/PSForAdmins/tree/main/PowerShell-5.1
 #>
-    [CmdletBinding(DefaultParameterSetName='JWTToken', 
+    [CmdletBinding(DefaultParameterSetName='JWToken', 
                    SupportsShouldProcess=$true)]
     param(
         [Parameter(
-        ParameterSetName='JWTToken',
+        ParameterSetName='JWToken',
         Position=0,
-        HelpMessage='JWT token.')]
-        [String]$JWTToken
+        HelpMessage='JW Token.')]
+        [String]$JWToken
     )
     # Extract subtokens.
-    $TokenHeader = ($JWTToken -split '\.')[0].Replace("-","+").Replace("_","/")
-    $TokenPayload = ($JWTToken -split '\.')[1].Replace("-","+").Replace("_","/")
+    $TokenHeader = ($JWToken -split '\.')[0].Replace("-","+").Replace("_","/")
+    $TokenPayload = ($JWToken -split '\.')[1].Replace("-","+").Replace("_","/")
     # Decode B64 string and convert from json.
     $ResHeader = [System.Text.Encoding]::UTF8.GetString([system.convert]::FromBase64String($TokenHeader)) | ConvertFrom-Json
     $ResPayload = [System.Text.Encoding]::UTF8.GetString([system.convert]::FromBase64String($TokenPayload)) | ConvertFrom-Json
@@ -52,19 +52,19 @@
     $CombinedObject
 }
 
-function Get-JWTTokenLifetime {
+function Get-JWTokenLifetime {
 <#
 .Synopsis
     Get JWT token lifetime.
 
 .DESCRIPTION
-    Get the lifetime of the specified JWT token. Use Approve-JWTToken to validate
+    Get the lifetime of the specified JWT token. Use Approve-JWToken to validate
     the token before using it.
 
 .EXAMPLE
     Get token lifetime. If minutes is lesser than 0. The token is expired.
 
-    Get-JWTTokenLifetime -JWTToken $token
+    Get-JWTokenLifetime -JWToken $token
 
     Output:
 
@@ -86,17 +86,17 @@ function Get-JWTTokenLifetime {
 .LINK
     https://github.com/IT-Administrators/PSForAdmins/tree/main/PowerShell-5.1
 #>
-    [CmdletBinding(DefaultParameterSetName='JWTToken', 
+    [CmdletBinding(DefaultParameterSetName='JWToken', 
                    SupportsShouldProcess=$true)]
     param(
         [Parameter(
-        ParameterSetName='JWTToken',
+        ParameterSetName='JWToken',
         Position=0,
-        HelpMessage='JWT token.')]
-        [String]$JWTToken
+        HelpMessage='JW Token.')]
+        [String]$JWToken
     )
     # Get only payload as it contains expiry information.
-    $TokenPayload = ($JWTToken -split '\.')[1].Replace("-","+").Replace("_","/")
+    $TokenPayload = ($JWToken -split '\.')[1].Replace("-","+").Replace("_","/")
     # Convert from B64 string.
     $Res = [System.Text.Encoding]::UTF8.GetString([system.convert]::FromBase64String($TokenPayload)) | ConvertFrom-Json
     # Create datetime object.
@@ -110,7 +110,7 @@ function Get-JWTTokenLifetime {
     }
 }
 
-function Approve-JWTToken {
+function Approve-JWToken {
 <#
 .Synopsis
     Check if specified token is valid.
@@ -121,7 +121,7 @@ function Approve-JWTToken {
 .EXAMPLE
     Check if the provided token is valid.
 
-    Approve-JWTToken -JWTToken $token
+    Approve-JWToken -JWToken $token
 
     Output:
 
@@ -134,23 +134,23 @@ function Approve-JWTToken {
     https://github.com/IT-Administrators/PSForAdmins/tree/main/PowerShell-5.1
 #>
 
-    [CmdletBinding(DefaultParameterSetName='JWTToken', 
+    [CmdletBinding(DefaultParameterSetName='JWToken', 
                    SupportsShouldProcess=$true)]
     param(
         [Parameter(
-        ParameterSetName='JWTToken',
+        ParameterSetName='JWToken',
         Position=0,
         HelpMessage='JWT token.')]
-        [String]$JWTToken
+        [String]$JWToken
     )
     # Validate jwt token. https://tools.ietf.org/html/rfc7519
     # If token not valid stop execution.
-    if (!$JWTToken.Contains(".") -or !$JWTToken.StartsWith("eyJ")) 
+    if (!$JWToken.Contains(".") -or !$JWToken.StartsWith("eyJ")) 
     {
         Write-Error "Invalid token" -ErrorAction Stop
     }
     foreach($t in 0..1) {
-        $Token = $JWTToken.Split(".")[$t].Replace("-","+").Replace("_","/")
+        $Token = $JWToken.Split(".")[$t].Replace("-","+").Replace("_","/")
         switch ($Token.Length % 4) {
             0 {break}
             2 {$Token += "=="}
