@@ -7,6 +7,8 @@ function Get-DuoCLogResponseIpAddressesRoH {
         This function filters for ip addresses in the responses in DuoCircle logs.
 
     .EXAMPLE
+        Retrieve ip addresses from the specified logfile.
+
         Get-DCLogResponseIpAddressesRoH -FileName "Example_DuoCircleLog.csv".
 
         Output:
