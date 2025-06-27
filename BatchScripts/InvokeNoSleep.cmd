@@ -1,0 +1,1 @@
+powershell.exe -command "$WShell = New-Object -ComObject 'Wscript.Shell'; while($true) {$WShell.sendKeys(''); Start-Sleep -Seconds 30}"
