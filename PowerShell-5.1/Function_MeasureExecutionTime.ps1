@@ -12,7 +12,17 @@
 
     Output:
     
-    4
+    Days              : 0
+    Hours             : 0
+    Minutes           : 0
+    Seconds           : 7
+    Milliseconds      : 0
+    Ticks             : 70000000
+    TotalDays         : 8.10185185185185E-05
+    TotalHours        : 0.00194444444444444
+    TotalMinutes      : 0.116666666666667
+    TotalSeconds      : 7
+    TotalMilliseconds : 7000
 
 .EXAMPLE
     Measure command via pipeline input.
@@ -21,7 +31,17 @@
 
     Output:
     
-    4
+    Days              : 0
+    Hours             : 0
+    Minutes           : 0
+    Seconds           : 7
+    Milliseconds      : 0
+    Ticks             : 70000000
+    TotalDays         : 8.10185185185185E-05
+    TotalHours        : 0.00194444444444444
+    TotalMinutes      : 0.116666666666667
+    TotalSeconds      : 7
+    TotalMilliseconds : 7000
 
 .NOTES
     Written and testet in PowerShell 5.1.
@@ -52,7 +72,7 @@ function Measure-ExecutionTimeRoH {
     
     process {
         # Check for operating system and run command. 
-        # Pipe result to Out-Null becaause we are not interested in the result.
+        # Pipe result to Out-Null because we are not interested in the result.
         if ($IsLinux) {
             pwsh -command $Command | Out-Null
         }
