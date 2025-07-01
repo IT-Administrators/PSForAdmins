@@ -104,10 +104,10 @@ function Convert-UserNameToSidRoH {
     process {
         foreach($username in $UserName) {
             try {
-                $User = [System.Security.Principal.NTAccount]::new($UserName)
+                $User = [System.Security.Principal.NTAccount]::new($username)
                 $UserSid = $User.Translate([System.Security.Principal.SecurityIdentifier])
                 $UserObj = New-Object PSCustomObject
-                Add-Member -InputObject $UserObj -MemberType NoteProperty -Name "User" -Value $UserName
+                Add-Member -InputObject $UserObj -MemberType NoteProperty -Name "User" -Value $username
                 Add-Member -InputObject $UserObj -MemberType NoteProperty -Name "SID" -Value $UserSid.Value  
                 $UserObj              
             }
