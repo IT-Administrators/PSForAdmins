@@ -124,7 +124,7 @@ function Connect-AzureBastionHostRDP {
                 Set-AzContext -SubscriptionId $BastionSubscriptionId -Tenant $TenantId 
                 # Select-AzSubscription -SubscriptionId $BastionSubscriptionId -Tenant $TenantId | Out-Null
                 # Get azure access token.
-                $AccessToken = (Get-AzAccessToken).Token
+                $AccessToken = (Get-AzAccessToken -AsSecureString).Token
                 if (!([string]::IsNullOrEmpty($AccessToken))) {
                     try {
                         # Get bastion information.
