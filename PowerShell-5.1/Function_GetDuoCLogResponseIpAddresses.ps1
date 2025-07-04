@@ -9,7 +9,7 @@ function Get-DuoCLogResponseIpAddressesRoH {
     .EXAMPLE
         Retrieve ip addresses from the specified logfile.
 
-        Get-DCLogResponseIpAddressesRoH -FileName "Example_DuoCircleLog.csv".
+        Get-DuoCLogResponseIpAddressesRoH -FileName "Example_DuoCircleLog.csv".
 
         Output:
 
