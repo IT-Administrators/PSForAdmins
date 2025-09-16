@@ -42,12 +42,12 @@ function Get-MSIInstallerFilesRoH {
 
         if (Test-Path $Path.Path) {
             # Load Windows Installer COM object.
-            $installer = New-Object -ComObject WindowsInstaller.Installer
-            $database = $installer.OpenDatabase($Path.Path, 0)
+            $Installer = New-Object -ComObject WindowsInstaller.Installer
+            $Database = $installer.OpenDatabase($Path.Path, 0)
 
-            # Query for files in the MSI
-            $query = "SELECT FileName, File FROM File"
-            $View = $database.OpenView($query)
+            # Query for files in the MSI.
+            $Query = "SELECT FileName, File FROM File"
+            $View = $database.OpenView($Query)
             $View.Execute()
         }
         else {
@@ -56,7 +56,7 @@ function Get-MSIInstallerFilesRoH {
     }
     
     process {
-            # Extract files
+            # Get file names.
             while ($Record = $View.Fetch()) {
                 $File = $Record.StringData(1)
                 $File
@@ -116,12 +116,12 @@ function Get-MSIInstallerFileRoH {
 
         if (Test-Path $Path.Path) {
             # Load Windows Installer COM object.
-            $installer = New-Object -ComObject WindowsInstaller.Installer
-            $database = $installer.OpenDatabase($Path.Path, 0)
+            $Installer = New-Object -ComObject WindowsInstaller.Installer
+            $Database = $installer.OpenDatabase($Path.Path, 0)
 
-            # Query for files in the MSI
-            $query = "SELECT FileName, File FROM File"
-            $View = $database.OpenView($query)
+            # Query for files in the MSI.
+            $Query = "SELECT FileName, File FROM File"
+            $View = $database.OpenView($Query)
             $View.Execute()
         }
         else {
@@ -130,7 +130,7 @@ function Get-MSIInstallerFileRoH {
     }
     
     process {
-            # Extract files
+            # Get file info.
             while ($Record = $View.Fetch()) {
                 $File = $Record.StringData(1)
                 if ($File -like "*$FileName") {
@@ -142,4 +142,5 @@ function Get-MSIInstallerFileRoH {
     end {
         
     }
+
 }
