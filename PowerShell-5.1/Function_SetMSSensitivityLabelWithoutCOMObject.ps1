@@ -85,7 +85,6 @@ $Xml = @"
 
         # Clean up
         Remove-Item -Path $TempDir -Recurse -Force
-
     }
     End
     {
