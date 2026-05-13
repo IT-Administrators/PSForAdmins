@@ -701,8 +701,6 @@ function Test-IsUserInGroupRoH {
         [switch]$IncludeContributingGroups
     )
 
-    Import-ActiveDirectoryModule
-
     $user  = Resolve-ADUserRoH -Identity $UserIdentity -Server $Server -Credential $Credential
     $group = Get-ADGroupByNameSafe -GroupIdentity $GroupIdentity -Server $Server -Credential $Credential
 
