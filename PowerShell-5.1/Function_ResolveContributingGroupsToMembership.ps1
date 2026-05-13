@@ -1,4 +1,4 @@
-function Resolve-ADUser {
+function Resolve-ADUserRoH {
     <#
     .SYNOPSIS
         Resolves an Active Directory user object from common identifiers.
@@ -30,10 +30,10 @@ function Resolve-ADUser {
         Optional. Alternate credentials for the AD query.
 
     .EXAMPLE
-        Resolve-ADUser -Identity "jdoe"
+        Resolve-ADUserRoH -Identity "jdoe"
 
     .EXAMPLE
-        Resolve-ADUser -Identity "jdoe@contoso.com" -Server "dc01.contoso.com"
+        Resolve-ADUserRoH -Identity "jdoe@contoso.com" -Server "dc01.contoso.com"
 
     .OUTPUTS
         Microsoft.ActiveDirectory.Management.ADUser
@@ -115,7 +115,7 @@ function Resolve-ADUser {
 
         if ($u2) { return $u2 }
 
-        throw "Resolve-ADUser: User '$Identity' could not be found in Active Directory."
+        throw "Resolve-ADUserRoH: User '$Identity' could not be found in Active Directory."
     }
 }
 
@@ -216,7 +216,7 @@ function Get-ADGroupByNameSafe {
     }
 }
 
-function Test-ADTransitiveGroupMembership {
+function Test-ADTransitiveGroupMembershipRoH {
     <#
     .SYNOPSIS
         Fast check for nested membership (transitive group membership).
@@ -243,7 +243,7 @@ function Test-ADTransitiveGroupMembership {
         Optional. Alternate credentials.
 
     .EXAMPLE
-        Test-ADTransitiveGroupMembership -UserDN $user.DistinguishedName -GroupDN $group.DistinguishedName
+        Test-ADTransitiveGroupMembershipRoH -UserDN $user.DistinguishedName -GroupDN $group.DistinguishedName
 
     .OUTPUTS
         System.Boolean or $null
@@ -287,7 +287,7 @@ function Test-ADTransitiveGroupMembership {
     }
 }
 
-function Get-ADGroupMembershipPath {
+function Get-ADGroupMembershipPathRoH {
     <#
     .SYNOPSIS
         Returns one readable nesting path from a start group to a user (first found).
@@ -318,7 +318,7 @@ function Get-ADGroupMembershipPath {
         Safety limit to prevent long runtime in very large nesting graphs.
 
     .EXAMPLE
-        Get-ADGroupMembershipPath -UserDN $user.DistinguishedName -StartGroupDN $group.DistinguishedName
+        Get-ADGroupMembershipPathRoH -UserDN $user.DistinguishedName -StartGroupDN $group.DistinguishedName
 
     .OUTPUTS
         PSCustomObject with:
@@ -494,7 +494,7 @@ function Get-ADGroupMembershipPath {
     }
 }
 
-function Get-ADContributingGroupsToMembership {
+function Get-ADContributingGroupsToMembershipRoH {
     <#
     .SYNOPSIS
         Returns the contributing direct child groups that cause membership in a target group.
@@ -527,7 +527,7 @@ function Get-ADContributingGroupsToMembership {
         Optional. Alternate credentials.
 
     .EXAMPLE
-        Get-ADContributingGroupsToMembership -UserDN $user.DistinguishedName -TargetGroupDN $group.DistinguishedName
+        Get-ADContributingGroupsToMembershipRoH -UserDN $user.DistinguishedName -TargetGroupDN $group.DistinguishedName
 
     .OUTPUTS
         PSCustomObject with:
@@ -569,7 +569,7 @@ function Get-ADContributingGroupsToMembership {
         }
     }
     catch {
-        throw "Get-ADContributingGroupsToMembership: Cannot read members of target group. Details: $($_.Exception.Message)"
+        throw "Get-ADContributingGroupsToMembershipRoH: Cannot read members of target group. Details: $($_.Exception.Message)"
     }
 
     # Determine direct membership of the user in the target group.
@@ -588,7 +588,7 @@ function Get-ADContributingGroupsToMembership {
         $childGroupDN = $m.DistinguishedName
         if (-not $childGroupDN) { continue }
 
-        $isInChild = Test-ADTransitiveGroupMembership -UserDN $UserDN -GroupDN $childGroupDN -Server $Server -Credential $Credential
+        $isInChild = Test-ADTransitiveGroupMembershipRoH -UserDN $UserDN -GroupDN $childGroupDN -Server $Server -Credential $Credential
 
         if ($isInChild -eq $true) {
 
@@ -636,7 +636,7 @@ function Get-ADContributingGroupsToMembership {
     }
 }
 
-function Test-IsUserInGroup {
+function Test-IsUserInGroupRoH {
     <#
     .SYNOPSIS
         Checks whether a user is a member of any AD group (including nested membership).
@@ -674,13 +674,13 @@ function Test-IsUserInGroup {
         Adds contributing direct child groups of the target group that grant membership.
 
     .EXAMPLE
-        Test-IsUserInGroup -UserIdentity "jdoe" -GroupIdentity "Protected Users"
+        Test-IsUserInGroupRoH -UserIdentity "jdoe" -GroupIdentity "Protected Users"
 
     .EXAMPLE
-        Test-IsUserInGroup -UserIdentity "jdoe" -GroupIdentity "Protected Users" -IncludeContributingGroups | Format-List
+        Test-IsUserInGroupRoH -UserIdentity "jdoe" -GroupIdentity "Protected Users" -IncludeContributingGroups | Format-List
 
     .EXAMPLE
-        Test-IsUserInGroup -UserIdentity "jdoe" -GroupIdentity "Helpdesk Admins" -IncludePath -Server "dc01.contoso.com" | Format-List
+        Test-IsUserInGroupRoH -UserIdentity "jdoe" -GroupIdentity "Helpdesk Admins" -IncludePath -Server "dc01.contoso.com" | Format-List
 
     .OUTPUTS
         PSCustomObject with membership result and optional details.
@@ -703,11 +703,11 @@ function Test-IsUserInGroup {
 
     Import-ActiveDirectoryModule
 
-    $user  = Resolve-ADUser -Identity $UserIdentity -Server $Server -Credential $Credential
+    $user  = Resolve-ADUserRoH -Identity $UserIdentity -Server $Server -Credential $Credential
     $group = Get-ADGroupByNameSafe -GroupIdentity $GroupIdentity -Server $Server -Credential $Credential
 
     # Fast result: membership yes/no (or null if blocked).
-    $fast = Test-ADTransitiveGroupMembership -UserDN $user.DistinguishedName -GroupDN $group.DistinguishedName -Server $Server -Credential $Credential
+    $fast = Test-ADTransitiveGroupMembershipRoH -UserDN $user.DistinguishedName -GroupDN $group.DistinguishedName -Server $Server -Credential $Credential
 
     $out = [ordered]@{
         UserInput              = $UserIdentity
@@ -735,7 +735,7 @@ function Test-IsUserInGroup {
 
     # Single path (first found).
     if ($IncludePath) {
-        $path = Get-ADGroupMembershipPath -UserDN $user.DistinguishedName -StartGroupDN $group.DistinguishedName -Server $Server -Credential $Credential
+        $path = Get-ADGroupMembershipPathRoH -UserDN $user.DistinguishedName -StartGroupDN $group.DistinguishedName -Server $Server -Credential $Credential
         $out.IsMember    = $path.Found
         $out.Path        = $path.PathPretty
         $out.CheckMethod = "BFS path reconstruction (single path)"
@@ -744,7 +744,7 @@ function Test-IsUserInGroup {
 
     # Contributing direct child groups.
     if ($IncludeContributingGroups) {
-        $contributors = Get-ADContributingGroupsToMembership -UserDN $user.DistinguishedName -TargetGroupDN $group.DistinguishedName -Server $Server -Credential $Credential
+        $contributors = Get-ADContributingGroupsToMembershipRoH -UserDN $user.DistinguishedName -TargetGroupDN $group.DistinguishedName -Server $Server -Credential $Credential
 
         $out.DirectMemberOfGroup    = $contributors.DirectMemberOfTarget
         $out.ContributingGroups     = $contributors.ContributingGroups
