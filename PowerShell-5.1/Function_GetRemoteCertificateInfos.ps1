@@ -328,7 +328,9 @@ function Get-RemoteCertificateInfosRoH {
                 if ($t -and $t.Trim()) {
                     $t2 = $t -split ",\s*"
                     foreach ($x in $t2) {
-                        if ($x -and $x.Trim()) { $parts += $x.Trim() }
+                        if ($x -and $x.Trim()) { 
+                            $parts += $x.Trim() 
+                        }
                     }
                 }
             }
@@ -566,7 +568,11 @@ function Get-RemoteCertificateInfosRoH {
             $usageHint = @()
             if ($eku -and $eku.Count -gt 0) {
                 foreach ($u in $eku) {
-                    if ($u.Name) { $usageHint += $u.Name } else { $usageHint += $u.Oid }
+                    if ($u.Name) { 
+                        $usageHint += $u.Name 
+                    } else { 
+                        $usageHint += $u.Oid 
+                    }
                 }
             }
             elseif ($ku) {
@@ -634,8 +640,17 @@ function Get-RemoteCertificateInfosRoH {
             # Cleanup:
             # Always close and dispose streams/sockets.
             # This prevents resource leaks and hanging connections.
-            if ($ssl) { try { $ssl.Dispose() } catch {} }
-            if ($tcp) { try { $tcp.Close(); $tcp.Dispose() } catch {} }
+            if ($ssl) { 
+                try { 
+                    $ssl.Dispose() 
+                } catch {} 
+            }
+            if ($tcp) { 
+                try { 
+                    $tcp.Close()
+                    $tcp.Dispose() 
+                } catch {} 
+            }
         }
     }
 }
