@@ -54,7 +54,7 @@ function Get-AzArcAccessTokenRoH {
         [string]$ResourceUrl = "https://vault.azure.net",
 
         [Parameter(
-        HelpMesage="Api version.")]
+        HelpMessage="Api version.")]
         [string]$ApiVersion = "2020-06-01"
     )
 
