@@ -20,6 +20,80 @@ function Get-LdapEffectiveKerberosTokenSizeRoH {
         - Exact final Kerberos ticket size cannot be guaranteed from LDAP alone because claims,
           PAC composition, and runtime behavior depend on the authentication context.
 
+          
+        The calculation is based on the Microsoft KB327825 formula:
+            TokenSize = 1200 + (40 * d) + (8 * s)
+
+        Where:
+            d = Number of domain local groups + SIDHistory entries
+            s = Number of global and universal groups
+
+        In addition to this baseline estimate, a heuristic value is provided that can include:
+            - Optional claims overhead
+            - Optional delegation factor
+            - Additional padding for unresolved SIDs
+
+        The function does not require the ActiveDirectory PowerShell module and relies solely
+        on System.DirectoryServices (LDAP).
+
+    .PARAMETER Identity
+        Specifies the user to query.
+
+        Supported formats:
+            - sAMAccountName (recommended for performance)
+            - UserPrincipalName (UPN)
+            - DistinguishedName (DN)
+            - ObjectSID (string representation)
+
+        The identity is used to locate the user object via LDAP.
+
+        Important notes:
+            - No implicit domain resolution is performed
+            - Input is LDAP-escaped internally to prevent invalid filter errors
+            - Using sAMAccountName gives the fastest lookup
+
+    .PARAMETER ClaimsOverheadBytes
+        Adds additional bytes to the calculated token size.
+
+        Purpose:
+            Modern Kerberos tickets may include "claims" (Dynamic Access Control),
+            which are not reflected in group membership calculations.
+
+        Typical usage:
+            - 0 bytes      → No claims expected
+            - 1024 bytes   → Small claims usage
+            - 2048–4096    → Conservative estimate in enterprise environments
+
+        Important:
+            This value is a heuristic and not based on a fixed Microsoft formula.
+
+
+    .PARAMETER Delegation
+        Indicates that Kerberos delegation is used.
+
+        Behavior:
+            - If enabled, the resulting token size is multiplied by 2
+
+        Explanation:
+            When delegation is used, tokens may be duplicated in certain authentication flows,
+            effectively increasing the size requirements.
+
+        Typical scenarios:
+            - Web applications using Kerberos constrained delegation
+            - Multi-tier authentication (frontend → backend services)
+
+            
+    .PARAMETER UnresolvedSidHeuristicBytes
+        Specifies how many bytes to add per SID that could not be resolved to a group object.
+
+        Default:
+            8 bytes per SID
+
+        Explanation:
+            Some SIDs (e.g., well-known SIDs or foreign security principals) may not resolve
+            to normal group objects. These still occupy space in the Kerberos token.
+
+        This parameter provides a simple way to account for them without dropping accuracy.
 
     .EXAMPLE
         Get the kerberos tokensize of the specified user.
@@ -54,15 +128,37 @@ function Get-LdapEffectiveKerberosTokenSizeRoH {
         https://github.com/IT-Administrators/PSForAdmins/tree/main/PowerShell-5.1
     #>
     
-    [CmdletBinding()]
+    [CmdletBinding(DefaultParameterSetName='ADKerberosTokenSize', 
+               SupportsShouldProcess=$true)]
     param(
-        [Parameter(Mandatory)]
-        [string]$Identity,   # sAMAccountName, UPN, DN, GUID string, SID string
+        [Parameter(
+        ParameterSetName='ADKerberosTokenSize',
+        Position=0,
+        HelpMessage='User identity (sAMAccountName, UPN, DN, GUID string, SID string).')]
+        [string]$Identity = $env:USERNAME,
+        
+        [Parameter(
+        ParameterSetName='ADKerberosTokenSize',
+        Position=0,
+        HelpMessage='DC Server name optional.')]
+        [string]$Server,
 
-        [string]$Server,     # optional DC/GC host name
-
+        [Parameter(
+        ParameterSetName='ADKerberosTokenSize',
+        Position=0,
+        HelpMessage='Adds additional bytes to the calculated token size.')]
         [int]$ClaimsOverheadBytes = 0,
+
+        [Parameter(
+        ParameterSetName='ADKerberosTokenSize',
+        Position=0,
+        HelpMessage='Indicates that Kerberos delegation is used.')]
         [switch]$Delegation,
+
+        [Parameter(
+        ParameterSetName='ADKerberosTokenSize',
+        Position=0,
+        HelpMessage='Specifies how many bytes to add per SID that could not be resolved to a group object.')]
         [int]$UnresolvedSidHeuristicBytes = 8
     )
 
@@ -317,4 +413,158 @@ function Get-LdapEffectiveKerberosTokenSizeRoH {
 
         Details                         = $resolvedDetails
     }
+}
+
+
+function Get-LocalKerberosTokenSizeRoH {
+<#
+.SYNOPSIS
+    Calculates the size of the local Windows access token based on SID binary length.
+
+.DESCRIPTION
+    This function retrieves the current Windows security token (or a supplied identity)
+    and calculates the total size of all Security Identifiers (SIDs) contained in the token.
+
+    The function uses the .NET class:
+        System.Security.Principal.WindowsIdentity
+
+    Each SID is measured using its BinaryLength property, which represents the actual
+    byte size of the SID structure in memory.
+
+    The result reflects the effective access token (LSA token) used by Windows for
+    authorization decisions. This includes:
+
+        - Active Directory group memberships
+        - Nested group memberships (already flattened)
+        - Well-known SIDs (e.g. Everyone, Authenticated Users)
+        - Local machine groups
+        - Logon session SIDs
+        - Integrity level SID
+        - Other system-added SIDs
+
+    This method provides a more direct representation of the runtime token compared
+    to LDAP-based estimations.
+
+.PARAMETER Identity
+    Optional WindowsIdentity object.
+
+    If not specified, the current user context is used.
+
+    This allows reuse in scenarios involving impersonation or alternate credentials.
+
+.PARAMETER IncludeUserSid
+    Includes the main user SID in the size calculation.
+
+    By default, only group SIDs are included to align with Kerberos token calculations.
+    When enabled, the user's own SID is added to the total.
+
+.PARAMETER IncludeDetails
+    Returns detailed information for each SID in the token.
+
+    This includes:
+        - SID string
+        - Binary length
+        - SID type (if resolvable)
+
+    Useful for identifying contributors to token size.
+
+.EXAMPLE
+    Get-LocalKerberosTokenSizeRoH
+
+    Calculates the SID size of the current user token.
+
+.EXAMPLE
+    Get-LocalKerberosTokenSizeRoH -IncludeUserSid
+
+    Includes the user SID in the total size.
+
+.EXAMPLE
+    Get-LocalKerberosTokenSizeRoH -IncludeDetails
+
+    Returns detailed SID breakdown.
+
+.NOTES
+    This function measures the Windows access token (LSA token),
+    not the Kerberos ticket (PAC).
+
+    Differences between LDAP-based Kerberos estimates and this function are expected,
+    because:
+        - Additional SIDs exist in the local token
+        - Kerberos adds protocol overhead (not measured here)
+        - SID sizes are variable length
+
+#>
+
+    [CmdletBinding(DefaultParameterSetName='LocalKerberosTokenSize', 
+            SupportsShouldProcess=$true)]
+    param(
+        [Parameter(
+        ParameterSetName='LocalKerberosTokenSize',
+        Position=0,
+        HelpMessage='User identity (sAMAccountName, UPN, DN, GUID string, SID string).')]
+        [System.Security.Principal.WindowsIdentity]$Identity = [System.Security.Principal.WindowsIdentity]::GetCurrent(),
+
+        [Parameter(
+        ParameterSetName='LocalKerberosTokenSize',
+        Position=0,
+        HelpMessage='Include the user SID in the calculation.')]
+        [switch]$IncludeUserSid,
+
+        [Parameter(
+        ParameterSetName='LocalKerberosTokenSize',
+        Position=0,
+        HelpMessage='Returns detailed information for each SID in the token.')]
+        [switch]$IncludeDetails
+    )
+
+    # Collect group SIDs
+    $groupSids = $Identity.Groups
+
+    # Convert to objects with BinaryLength
+    $sidObjects = foreach ($sid in $groupSids) {
+        try {
+            [PSCustomObject]@{
+                SID           = $sid.Value
+                BinaryLength  = $sid.BinaryLength
+                Type          = try {
+                    $sid.Translate([System.Security.Principal.NTAccount]).Value
+                } catch {
+                    "Unresolved"
+                }
+            }
+        }
+        catch {
+            [PSCustomObject]@{
+                SID           = $null
+                BinaryLength  = 0
+                Type          = "Error"
+            }
+        }
+    }
+
+    # Calculate totals
+    $totalBytes = ($sidObjects | Measure-Object -Property BinaryLength -Sum).Sum
+    $count = $sidObjects.Count
+
+    $userSidSize = 0
+
+    if ($IncludeUserSid) {
+        $userSidSize = $Identity.User.BinaryLength
+        $totalBytes += $userSidSize
+        $count++
+    }
+
+    # Output
+    $result = [PSCustomObject]@{
+        TotalSidCount   = $count
+        TotalSizeBytes  = $totalBytes
+        AverageSidSize  = if ($count -gt 0) { [math]::Round($totalBytes / $count, 2) } else { 0 }
+        UserSidSize     = if ($IncludeUserSid) { $userSidSize } else { $null }
+    }
+
+    if ($IncludeDetails) {
+        $result | Add-Member -MemberType NoteProperty -Name Details -Value $sidObjects
+    }
+
+    return $result
 }
