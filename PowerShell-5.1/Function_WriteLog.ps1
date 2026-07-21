@@ -101,7 +101,7 @@
         [String]$LogFile = ((Get-Date).ToShortDateString()).replace(".","") +".txt"
     )
 
-    if($global:EnableWriteLogRoH -eq $true) {
+    begin {
         # Set error view. Changes error message details.
         $ErrorView = $ErrView
 
@@ -112,20 +112,28 @@
         else{
             $LogFilePath = $LogFile
         }
-
-        if ($null -eq $Message -or $Message -eq ""){
-            $Date = (Get-Date).ToShortDateString() + " " + (Get-Date).TolongtimeString()
-            Add-Content $LogFilePath -Value "$Date|$Level|$Message" -ErrorAction SilentlyContinue
-        }
-        else{
-            $Date = (Get-Date).ToShortDateString() + " " + (Get-Date).TolongtimeString()
-            Add-Content $LogFilePath -Value "$Date|$Level|$Message" -ErrorAction SilentlyContinue
-        }
-
-        return $LogFilePath
     }
-    else {
-        return
+
+    process {
+        # Check if logging is globally enabled.
+        if($global:EnableWriteLogRoH -eq $true) {
+            $Date = (Get-Date).ToShortDateString() + " " + (Get-Date).TolongtimeString()
+            if ($null -eq $Message -or $Message -eq ""){
+                Add-Content $LogFilePath -Value "$Date|$Level|$Message" -ErrorAction SilentlyContinue
+            }
+            else{
+                Add-Content $LogFilePath -Value "$Date|$Level|$Message" -ErrorAction SilentlyContinue
+            }
+
+            return $LogFilePath
+        }
+        else {
+            return
+        }
+    }
+
+    end {
+
     }
 
 }
