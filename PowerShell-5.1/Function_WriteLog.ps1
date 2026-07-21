@@ -45,7 +45,7 @@
 
         FileContent:
 
-        |11.08.2023 12:06:10|INFO|
+        11.08.2023 12:06:10|INFO|
 
     .EXAMPLE
         Write log to default file with customized message.
@@ -58,8 +58,8 @@
 
         FileContent:
 
-        |11.08.2023 12:06:10|INFO|
-        |11.08.2023 12:07:23|INFO|Installation failure.
+        11.08.2023 12:06:10|INFO|
+        11.08.2023 12:07:23|INFO|Installation failure.
         ...
 
     .NOTES
