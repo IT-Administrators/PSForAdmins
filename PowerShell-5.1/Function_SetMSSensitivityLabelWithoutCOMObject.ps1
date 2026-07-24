@@ -1,7 +1,7 @@
-﻿function Set-MSSensitivityLabelWithoutCOMRoH
+function Set-MSSensitivityLabelWithoutCOMRoH
  {
     <#
-    .Synopsis
+    .SYNOPSIS
         Apply sensitivity labels without using COM objects
 
     .DESCRIPTION
@@ -43,10 +43,23 @@
         [String]$TenantID
     )
  
-    Begin
+    begin
     {
+        # Check if filename was provided if not error out
+        if(Test-Path -Path $FileName -PathType Container){
+            Write-Error -Message "Input must be a file." -Category InvalidArgument -ErrorAction Stop
+        }
+        # Resolve file
+        $File = Get-ChildItem -Path $FileName
+        $Ext = $File.Extension
+
+        # Extensions must be specified with a dot.
+        $AllowedFileExtensions = @(".xlsx",".docx",".pptx")
+        if(!$AllowedFileExtensions.Contains($Ext)){
+            Write-Error -Message "Unsupported filetype. Filetype must one of $($AllowedFileExtensions -join(","))."-Category InvalidData -ErrorAction Stop
+        }
     }
-    Process
+    process
     {
         $LabelInfoFile = "LabelInfo.xml"
 # Here string with label informations
@@ -54,39 +67,32 @@ $Xml = @"
 <?xml version="1.0" encoding="utf-8" standalone="yes"?><clbl:labelList xmlns:clbl="http://schemas.microsoft.com/office/2020/mipLabelMetadata"><clbl:label id="{$LabelID}" enabled="1" method="Privileged" siteId="{$TenantID}" contentBits="0" removed="0" /></clbl:labelList>
 "@
         #$LabelInfoFiles = @("LabelInfo.xml","custom.xml")
-        # Check if filename was provided if not error out
-        if(Test-Path -Path $FileName -PathType Container){
-            Write-Error -Message "Input must a file name." -Category InvalidArgument
-        }
-        # Resolve file
-        $File = Get-ChildItem -Path $FileName
-        $Ext = $File.Extension
-        # If not copy specified while and change extension to .zip.
+        # Copy specified while and change extension to .zip.
         if($Ext -ne ".zip"){
             $ZipFile = Join-Path -Path $File.Directory.FullName -ChildPath ($File.BaseName + ".zip")
             Copy-Item -Path $File -Destination $ZipFile -Force
         }
-        # Temporary directory
+        # Temporary directory.
         $TempDir = "$($File.Directory)\temp_$($File.BaseName)"
     
-        # Expand archive to see metadata of file
+        # Expand archive to see metadata of file.
         Expand-Archive -Path $ZipFile -DestinationPath $TempDir -Force
 
-        # Create label info file
+        # Create label info file.
         $Xml | Set-Content -Path ($TempDir + "\" + "docMetadata" + "\" + $LabelInfoFile) -Encoding UTF8 -Force
 
-        # Compress files to archive again
+        # Compress files to archive again.
         Compress-Archive -Path "$TempDir\*" -DestinationPath $ZipFile -Force
 
         # Remove dest file to rename zip. Rename-Item does not overwrite files that exist.
         Remove-Item -Path $File -Force
-        # Rename file back to origininal name
+        # Rename file back to origininal name.
         Rename-Item -Path $ZipFile -NewName $File.Name -Force
 
-        # Clean up
+        # Clean up.
         Remove-Item -Path $TempDir -Recurse -Force
     }
-    End
+    end
     {
     }
 }
