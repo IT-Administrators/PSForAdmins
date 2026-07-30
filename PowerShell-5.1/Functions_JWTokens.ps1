@@ -63,8 +63,7 @@ function ConvertFrom-Base64UrlString {
     }
 }
 
-
-function Get-JWTokenInfos {
+Function Get-JWTokenInfos {
     <#
     .SYNOPSIS
         Get all information from a JWT.
@@ -129,8 +128,7 @@ function Get-JWTokenInfos {
     return $CombinedObject
 }
 
-
-function Get-JWTokenLifetime {
+Function Get-JWTokenLifetime {
     <#
     .SYNOPSIS
         Get JWT token lifetime.
@@ -209,7 +207,6 @@ function Get-JWTokenLifetime {
 
     return $TimeUntilExpiry
 }
-
 
 function Approve-JWToken {
     <#
@@ -308,4 +305,392 @@ function Approve-JWToken {
     }
 
     return $true
+}
+
+function ConvertFrom-Base64UrlBytes {
+    <#
+    .SYNOPSIS
+        Converts a Base64Url encoded string to bytes.
+
+    .DESCRIPTION
+        JWT header, payload, and signature sections use Base64Url encoding.
+        This helper converts Base64Url to normal Base64, restores missing padding,
+        and returns the decoded byte array.
+
+    .NOTES
+        Compatible with Windows PowerShell 5.1 and PowerShell 7+.
+
+    .LINK
+        https://github.com/IT-Administrators/PSForAdmins/tree/main/PowerShell-5.1
+    #>
+    [CmdletBinding()]
+    param(
+        [Parameter(
+        Mandatory = $true,
+        HelpMessage = "base64url encoded string.")]
+        [string]$InputString
+    )
+
+    if ([string]::IsNullOrWhiteSpace($InputString)) {
+        throw "Base64Url input string is empty."
+    }
+
+    $Base64 = $InputString.Replace('-', '+').Replace('_', '/')
+
+    switch ($Base64.Length % 4) {
+        0 {
+            # No padding required.
+        }
+        2 {
+            $Base64 += '=='
+        }
+        3 {
+            $Base64 += '='
+        }
+        default {
+            throw "Invalid Base64Url string length. The input cannot be padded to valid Base64."
+        }
+    }
+
+    return [System.Convert]::FromBase64String($Base64)
+}
+
+function ConvertFrom-Base64UrlString {
+<#
+.SYNOPSIS
+    Converts a Base64Url encoded string to a UTF-8 string.
+#>
+    [CmdletBinding()]
+    param(
+        [Parameter(Mandatory = $true)]
+        [string]$InputString
+    )
+
+    $Bytes = ConvertFrom-Base64UrlBytes -InputString $InputString
+    return [System.Text.Encoding]::UTF8.GetString($Bytes)
+}
+
+function New-RsaProviderFromJwk {
+    <#
+    .SYNOPSIS
+        Creates an RSA provider from a JSON Web Key.
+
+    .DESCRIPTION
+        Creates an RSACryptoServiceProvider from a JWK that contains the public key
+        parameters 'n' and 'e'.
+
+        n = RSA modulus
+        e = RSA public exponent
+
+    .NOTES
+        This function only creates a public key provider.
+        It cannot decrypt data or create signatures.
+
+    .LINK
+            https://github.com/IT-Administrators/PSForAdmins/tree/main/PowerShell-5.1
+    #>
+    [CmdletBinding()]
+    param(
+        [Parameter(
+        Mandatory = $true,
+        HelpMessage = "Json web key")]
+        [object]$Jwk
+    )
+
+    if ([string]::IsNullOrWhiteSpace($Jwk.n)) {
+        throw "JWK does not contain the required 'n' modulus property."
+    }
+
+    if ([string]::IsNullOrWhiteSpace($Jwk.e)) {
+        throw "JWK does not contain the required 'e' exponent property."
+    }
+
+    $RsaParameters = New-Object System.Security.Cryptography.RSAParameters
+    $RsaParameters.Modulus = ConvertFrom-Base64UrlBytes -InputString $Jwk.n
+    $RsaParameters.Exponent = ConvertFrom-Base64UrlBytes -InputString $Jwk.e
+
+    $Rsa = New-Object System.Security.Cryptography.RSACryptoServiceProvider
+    $Rsa.ImportParameters($RsaParameters)
+
+    return $Rsa
+}
+
+function Get-RsaProviderFromCertificate {
+<#
+.SYNOPSIS
+    Gets an RSA public key provider from an X509 certificate.
+#>
+    [CmdletBinding()]
+    param(
+        [Parameter(
+        Mandatory = $true,
+        HelpMessage = "Certificate specified as .cer file.")]
+        [System.Security.Cryptography.X509Certificates.X509Certificate2]$Certificate
+    )
+
+    try {
+        # Works on newer .NET versions.
+        $Rsa = [System.Security.Cryptography.X509Certificates.RSACertificateExtensions]::GetRSAPublicKey($Certificate)
+
+        if ($null -ne $Rsa) {
+            return $Rsa
+        }
+    }
+    catch {
+        # Fall back to older .NET Framework compatible access below.
+    }
+
+    try {
+        # Windows PowerShell 5.1 compatible fallback.
+        $Rsa = $Certificate.PublicKey.Key
+
+        if ($null -ne $Rsa) {
+            return $Rsa
+        }
+    }
+    catch {
+        throw "Failed to get RSA public key from certificate. $($_.Exception.Message)"
+    }
+
+    throw "Certificate does not contain an RSA public key."
+}
+
+
+function Get-JwkFromJwksUri {
+    <#
+    .SYNOPSIS
+        Gets the matching JWK from a JWKS endpoint.
+
+    .DESCRIPTION
+        Downloads the JSON Web Key Set from the specified JWKS URI and selects the signing key matching the JWT header kid value.
+
+    .NOTES
+        The JWKS endpoint must be trusted before using it for security decisions.
+
+    .LINK
+        https://github.com/IT-Administrators/PSForAdmins/tree/main/PowerShell-5.1
+    #>
+    [CmdletBinding()]
+    param(
+        [Parameter(
+        Mandatory = $true,
+        HelpMessage = "Jason web token.")]
+        [string]$JWToken,
+
+        [Parameter(Mandatory = $true)]
+        [string]$JwksUri
+    )
+
+    $TokenParts = $JWToken -split '\.'
+
+    if ($TokenParts.Count -ne 3) {
+        throw "Invalid JWT. A JWT must contain exactly three parts."
+    }
+
+    $Header = ConvertFrom-Base64UrlString -InputString $TokenParts[0] | ConvertFrom-Json
+
+    if ([string]::IsNullOrWhiteSpace($Header.kid)) {
+        throw "JWT header does not contain a kid value. A matching JWKS key cannot be selected safely."
+    }
+
+    try {
+        # Many HTTPS endpoints require TLS 1.2 when called from Windows PowerShell 5.1.
+        [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
+    }
+    catch {
+        # Ignore if the platform does not allow changing this setting.
+    }
+
+    try {
+        $Jwks = Invoke-RestMethod -Uri $JwksUri -Method Get
+    }
+    catch {
+        throw "Failed to download JWKS from '$JwksUri'. $($_.Exception.Message)"
+    }
+
+    if ($null -eq $Jwks.keys) {
+        throw "JWKS response does not contain a 'keys' property."
+    }
+
+    $MatchingKey = $Jwks.keys | Where-Object {$_.kid -eq $Header.kid} | Select-Object -First 1
+
+    if ($null -eq $MatchingKey) {
+        throw "No matching JWK found for kid '$($Header.kid)'."
+    }
+
+    return $MatchingKey
+}
+function Test-JWTokenSignature {
+    <#
+    .SYNOPSIS
+        Validates the cryptographic signature of a JWT.
+
+    .DESCRIPTION
+        Validates the JWT signature by using either:
+
+        - an X509 certificate containing the public key
+        - a JWK object containing n and e
+        - a JWKS endpoint from which the matching key is selected by kid
+
+        Supported algorithms:
+
+        - RS256
+        - RS384
+        - RS512
+
+        Important:
+        This function validates the cryptographic signature only.
+        Additional checks should still be done separately, for example:
+
+        - exp
+        - nbf
+        - iss
+        - aud
+        - trusted issuer
+        - trusted JWKS endpoint
+        - certificate chain, if certificates are used
+
+    .EXAMPLE
+        Test-JWTokenSignature -JWToken $Token -Certificate $Certificate
+
+    .EXAMPLE
+        Test-JWTokenSignature -JWToken $Token -Jwk $Jwk
+
+    .EXAMPLE
+        Test-JWTokenSignature -JWToken $Token -JwksUri "https://issuer.example.com/.well-known/jwks.json"
+
+    .NOTES
+        Compatible with Windows PowerShell 5.1 and PowerShell 7+.
+
+    .LINK
+        https://github.com/IT-Administrators/PSForAdmins/tree/main/PowerShell-5.1
+    #>
+    [CmdletBinding(DefaultParameterSetName = 'Certificate')]
+    param(
+        [Parameter(
+        Mandatory = $true,
+        HelpMessage = "Base64 encoded token.")]
+        [string]$JWToken,
+
+        [Parameter(
+        ParameterSetName = 'Certificate',
+        Mandatory = $true,
+        HelpMessage = "Certificate as .cer file.")]
+        [System.Security.Cryptography.X509Certificates.X509Certificate2]$Certificate,
+
+        [Parameter(
+        ParameterSetName = 'Jwk',
+        Mandatory = $true,
+        HelpMessage = "JSON Web Key")]
+        [object]$Jwk,
+
+        [Parameter(
+        ParameterSetName = 'JwksUri',
+        Mandatory = $true,
+        HelpMessage = "JWK url.")]
+        [string]$JwksUri
+    )
+
+    $TokenParts = $JWToken -split '\.'
+
+    if ($TokenParts.Count -ne 3) {
+        Write-Error "Invalid JWT. A JWT must contain exactly three parts." -Category InvalidArgument -ErrorAction Stop
+    }
+
+    if ([string]::IsNullOrWhiteSpace($TokenParts[0])) {
+        Write-Error "Invalid JWT. Header is empty." -Category InvalidArgument -ErrorAction Stop
+    }
+
+    if ([string]::IsNullOrWhiteSpace($TokenParts[1])) {
+        Write-Error "Invalid JWT. Payload is empty." -Category InvalidArgument -ErrorAction Stop
+    }
+
+    if ([string]::IsNullOrWhiteSpace($TokenParts[2])) {
+        Write-Error "Invalid JWT. Signature is empty." -Category InvalidArgument -ErrorAction Stop
+    }
+
+    try {
+        $Header = ConvertFrom-Base64UrlString -InputString $TokenParts[0] | ConvertFrom-Json
+    }
+    catch {
+        Write-Error "Invalid JWT header. $($_.Exception.Message)" -Category InvalidData -ErrorAction Stop
+    }
+
+    if ([string]::IsNullOrWhiteSpace($Header.alg)) {
+        Write-Error "JWT header does not contain an alg value." -Category InvalidData -ErrorAction Stop
+    }
+
+    if ($Header.alg -eq 'none') {
+        Write-Error "JWT uses alg 'none'. This function rejects unsigned tokens." -Category SecurityError -ErrorAction Stop
+    }
+
+    $HashAlgorithmName = $null
+    $LegacyHashName = $null
+
+    switch ($Header.alg) {
+        'RS256' {
+            $HashAlgorithmName = [System.Security.Cryptography.HashAlgorithmName]::SHA256
+            $LegacyHashName = 'SHA256'
+        }
+        'RS384' {
+            $HashAlgorithmName = [System.Security.Cryptography.HashAlgorithmName]::SHA384
+            $LegacyHashName = 'SHA384'
+        }
+        'RS512' {
+            $HashAlgorithmName = [System.Security.Cryptography.HashAlgorithmName]::SHA512
+            $LegacyHashName = 'SHA512'
+        }
+        default {
+            Write-Error "Unsupported JWT signing algorithm '$($Header.alg)'. This function supports RS256, RS384, and RS512." -Category NotImplemented -ErrorAction Stop
+        }
+    }
+
+    try {
+        if ($PSCmdlet.ParameterSetName -eq 'JwksUri') {
+            $Jwk = Get-JwkFromJwksUri -JWToken $JWToken -JwksUri $JwksUri
+        }
+
+        if ($PSCmdlet.ParameterSetName -eq 'Jwk' -or $PSCmdlet.ParameterSetName -eq 'JwksUri') {
+            if ($null -ne $Jwk.kid -and $null -ne $Header.kid -and $Jwk.kid -ne $Header.kid) {
+                Write-Error "JWK kid '$($Jwk.kid)' does not match JWT header kid '$($Header.kid)'." -Category SecurityError -ErrorAction Stop
+            }
+
+            if ($Jwk.kty -and $Jwk.kty -ne 'RSA') {
+                Write-Error "JWK key type is '$($Jwk.kty)', expected 'RSA'." -Category InvalidData -ErrorAction Stop
+            }
+
+            if ($Jwk.alg -and $Jwk.alg -ne $Header.alg) {
+                Write-Error "JWK alg '$($Jwk.alg)' does not match JWT alg '$($Header.alg)'." -Category SecurityError -ErrorAction Stop
+            }
+
+            if ($Jwk.x5c -and $Jwk.x5c.Count -gt 0) {
+                $CertificateBytes = [System.Convert]::FromBase64String($Jwk.x5c[0])
+                $Certificate = New-Object System.Security.Cryptography.X509Certificates.X509Certificate2 -ArgumentList @(,$CertificateBytes)
+                $Rsa = Get-RsaProviderFromCertificate -Certificate $Certificate
+            }
+            else {
+                $Rsa = New-RsaProviderFromJwk -Jwk $Jwk
+            }
+        }
+        else {
+            $Rsa = Get-RsaProviderFromCertificate -Certificate $Certificate
+        }
+
+        $SigningInput = "$($TokenParts[0]).$($TokenParts[1])"
+        $SigningInputBytes = [System.Text.Encoding]::ASCII.GetBytes($SigningInput)
+        $SignatureBytes = ConvertFrom-Base64UrlBytes -InputString $TokenParts[2]
+
+        # Windows PowerShell 5.1 often returns RSACryptoServiceProvider here.
+        # That provider uses the older VerifyData overload.
+        if ($Rsa -is [System.Security.Cryptography.RSACryptoServiceProvider]) {
+            $HashOid = [System.Security.Cryptography.CryptoConfig]::MapNameToOID($LegacyHashName)
+            return $Rsa.VerifyData($SigningInputBytes, $HashOid, $SignatureBytes)
+        }
+
+        # Newer RSA implementations use HashAlgorithmName and RSASignaturePadding.
+        return $Rsa.VerifyData($SigningInputBytes, $SignatureBytes, $HashAlgorithmName, [System.Security.Cryptography.RSASignaturePadding]::Pkcs1)
+    }
+    catch {
+        Write-Error "JWT signature validation failed. $($_.Exception.Message)" -Category SecurityError -ErrorAction Stop
+    }
 }
