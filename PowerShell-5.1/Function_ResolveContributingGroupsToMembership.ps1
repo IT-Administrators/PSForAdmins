@@ -46,8 +46,17 @@ function Resolve-ADUserRoH {
     #>
     [CmdletBinding()]
     param(
-        [Parameter(Mandatory)][string]$Identity,
+        [Parameter(
+        Mandatory,
+        HelpMessage = "User identity.")]
+        [string]$Identity,
+
+        [Parameter(
+        HelpMessage = "Active directory domain controller. Uses the current users logonserver by default.")]
         [string]$Server,
+
+        [Parameter(
+        HelpMessage = "Credentials required if current user is not allowed to read informations.")]
         [pscredential]$Credential
     )
 
@@ -61,7 +70,7 @@ function Resolve-ADUserRoH {
         'SID'
     )
 
-    # Direct identity lookup (fast path).
+    # Direct identity lookup.
     try {
         if ($Server -and $Credential) {
             return Get-ADUser -Server $Server -Credential $Credential -Identity $Identity -Properties $properties
@@ -163,8 +172,17 @@ function Get-ADGroupByNameSafe {
     #>
     [CmdletBinding()]
     param(
-        [Parameter(Mandatory)][string]$GroupIdentity,
+        [Parameter(
+        Mandatory,
+        HelpMessage = "Identity of the group.")]
+        [string]$GroupIdentity,
+
+        [Parameter(
+        HelpMessage = "Active directory domain controller. Uses the current users logonserver by default.")]
         [string]$Server,
+
+        [Parameter(
+        HelpMessage = "Credentials required if current user is not allowed to read informations.")]
         [pscredential]$Credential
     )
 
@@ -256,9 +274,22 @@ function Test-ADTransitiveGroupMembershipRoH {
     #>
     [CmdletBinding()]
     param(
-        [Parameter(Mandatory)][string]$UserDN,
-        [Parameter(Mandatory)][string]$GroupDN,
+        [Parameter(
+        Mandatory,
+        HelpMessage = "User distinguishedname.")]
+        [string]$UserDN,
+
+        [Parameter(
+        Mandatory,
+        HelpMessage = "Group distinguishedname.")]
+        [string]$GroupDN,
+
+        [Parameter(
+        HelpMessage = "Active directory domain controller. Uses the current users logonserver by default.")]
         [string]$Server,
+
+        [Parameter(
+        HelpMessage = "Credentials required if current user is not allowed to read informations.")]
         [pscredential]$Credential
     )
 
@@ -290,7 +321,7 @@ function Test-ADTransitiveGroupMembershipRoH {
 function Get-ADGroupMembershipPathRoH {
     <#
     .SYNOPSIS
-        Returns one readable nesting path from a start group to a user (first found).
+        Returns one readable nesting path from a start group to a user.
 
     .DESCRIPTION
         This function performs a Breadth-First Search (BFS) through group nesting:
@@ -334,10 +365,26 @@ function Get-ADGroupMembershipPathRoH {
     #>
     [CmdletBinding()]
     param(
-        [Parameter(Mandatory)][string]$UserDN,
-        [Parameter(Mandatory)][string]$StartGroupDN,
+        [Parameter(
+        Mandatory,
+        HelpMessage = "User distinguishedname.")]
+        [string]$UserDN,
+
+        [Parameter(
+        Mandatory,
+        HelpMessage = "Distinguishedname of the group to start with.")]
+        [string]$StartGroupDN,
+
+        [Parameter(
+        HelpMessage = "Active directory domain controller. Uses the current users logonserver by default.")]
         [string]$Server,
+
+        [Parameter(
+        HelpMessage = "Credentials required if current user is not allowed to read informations.")]
         [pscredential]$Credential,
+
+        [Parameter(
+        HelpMessage = "Max groups that wil be resolved.")]
         [int]$MaxGroupsVisited = 20000
     )
 
@@ -371,7 +418,7 @@ function Get-ADGroupMembershipPathRoH {
 
         $currentGroupDN = $queue.Dequeue()
 
-        # Resolve group name for the current group (best effort).
+        # Resolve group name for the current group.
         if (-not $nameCache.ContainsKey($currentGroupDN)) {
             try {
                 if ($Server -and $Credential) {
@@ -543,9 +590,22 @@ function Get-ADContributingGroupsToMembershipRoH {
     #>
     [CmdletBinding()]
     param(
-        [Parameter(Mandatory)][string]$UserDN,
-        [Parameter(Mandatory)][string]$TargetGroupDN,
+        [Parameter(
+        Mandatory,
+        HelpMessage = "Distinguishedname of the user.")]
+        [string]$UserDN,
+
+        [Parameter(
+        Mandatory,
+        HelpMessage = "Distingiuishedname of the target group.")]
+        [string]$TargetGroupDN,
+
+        [Parameter(
+        HelpMessage = "Active directory domain controller. Uses the current users logonserver by default.")]
         [string]$Server,
+
+        [Parameter(
+        HelpMessage = "Credentials required if current user is not allowed to read informations.")]
         [pscredential]$Credential
     )
 
@@ -592,7 +652,7 @@ function Get-ADContributingGroupsToMembershipRoH {
 
         if ($isInChild -eq $true) {
 
-            # Resolve group name for readable output (best effort).
+            # Resolve group name for readable output.
             try {
                 if ($Server -and $Credential) {
                     $g = Get-ADGroup -Server $Server -Credential $Credential -Identity $childGroupDN -Properties Name
@@ -693,11 +753,30 @@ function Test-IsUserInGroupRoH {
     #>
     [CmdletBinding()]
     param(
-        [Parameter(Mandatory)][string]$UserIdentity,
-        [Parameter(Mandatory)][string]$GroupIdentity,
+        [Parameter(
+        Mandatory,
+        HelpMessage = "User identity.")]
+        [string]$UserIdentity,
+
+        [Parameter(
+        Mandatory,
+        HelpMessage = "Group identity.")]
+        [string]$GroupIdentity,
+
+        [Parameter(
+        HelpMessage = "Active directory domain controller. Uses the current users logonserver by default.")]
         [string]$Server,
+
+        [Parameter(
+        HelpMessage = "Credentials required if current user is not allowed to read informations.")]
         [pscredential]$Credential,
+
+        [Parameter(
+        HelpMessage = "Adds a readable chain from the target group to the user (single path).")]
         [switch]$IncludePath,
+
+        [Parameter(
+        HelpMessage = "Adds contributing direct child groups of the target group that grant membership.")]
         [switch]$IncludeContributingGroups
     )
 
@@ -731,7 +810,7 @@ function Test-IsUserInGroupRoH {
         $out.CheckMethod = "Fast LDAP check unavailable (use -IncludePath and/or -IncludeContributingGroups)"
     }
 
-    # Single path (first found).
+    # Single path.
     if ($IncludePath) {
         $path = Get-ADGroupMembershipPathRoH -UserDN $user.DistinguishedName -StartGroupDN $group.DistinguishedName -Server $Server -Credential $Credential
         $out.IsMember    = $path.Found
@@ -762,3 +841,5 @@ function Test-IsUserInGroupRoH {
 
     return [pscustomobject]$out
 }
+
+Test-IsUserInGroupRoH -UserIdentity R100380 -GroupIdentity "Protected users"
