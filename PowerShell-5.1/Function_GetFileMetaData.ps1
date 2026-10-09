@@ -84,13 +84,15 @@ function Get-FileMetaDataInfosRoH {
     .DESCRIPTION
         Get all metadata about the specified file.
 
-        Because this function uses COM objects the directory and the filename must be 
-        specified separately.
+    .EXAMPLE
+        Get all metadata about the specified file.
+
+        Get-FileMetaDataInfosRoH -Directory "C:\Users\User\Downloads\" -FileName "image.png"
 
     .EXAMPLE
         Get all metadata about the specified file.
 
-        Get-FileMetaDataInfosRoH -Directory "C:\Users\User\Downloads\"" -FileName "image.png"
+        Get-FileMetaDataInfosRoH -Path "C:\Users\User\Downloads\image.png"
 
     .NOTES
         Written and testet in PowerShell 5.1.
@@ -99,8 +101,14 @@ function Get-FileMetaDataInfosRoH {
         https://github.com/IT-Administrators/PSForAdmins/tree/main/PowerShell-5.1
     #>
 
-    [CmdletBinding(DefaultParameterSetName='MetadataProperties')]
+    [CmdletBinding(DefaultParameterSetName='FileMetadataProperties')]
     param(
+        [Parameter(
+        ParameterSetName='FileMetadataProperties', 
+        Position=0, 
+        HelpMessage='Path of the file.')]
+        [string]$Path,
+
         [Parameter(
         ParameterSetName='MetadataProperties', 
         Position=0, 
@@ -115,20 +123,34 @@ function Get-FileMetaDataInfosRoH {
     )
     
     begin {
-        # Create full filepath to test if file exists.
-        $JoinedPath = Join-Path -Path $Directory -ChildPath $FileName
-        if ((Test-Path -Path $JoinedPath -PathType Leaf) -ne $true) {
-            Write-Error -Message "File does not exist. You need to specify a file using the -FileName parameter." -Category InvalidArgument -ErrorAction Stop
+        if ($PSBoundParameters.ContainsKey("Path")) {
+            if ((Test-Path -Path $Path -PathType Leaf) -ne $true) {
+                Write-Error -Message "File does not exist." -Category InvalidArgument -ErrorAction Stop
+            }
+            # Create COM object.
+            $Shell = New-Object -ComObject Shell.Application
+            # Create directory object.
+            $Folder = $Shell.Namespace((Split-Path -Path $Path -Parent))
+            # Create file object.
+            $File = $Folder.ParseName((Split-Path -Path $Path -Leaf))
+
+        }
+        if ($PSBoundParameters.ContainsKey("FileName") -or $PSBoundParameters.ContainsKey("Directory")) {
+            # Create full filepath to test if file exists.
+            $JoinedPath = Join-Path -Path $Directory -ChildPath $FileName
+            if ((Test-Path -Path $JoinedPath -PathType Leaf) -ne $true) {
+                Write-Error -Message "File does not exist. You need to specify a file using the -FileName parameter." -Category InvalidArgument -ErrorAction Stop
+            }
+            # Create COM object.
+            $Shell = New-Object -ComObject Shell.Application
+            # Create directory object.
+            $Folder = $Shell.Namespace($Directory)
+            # Create file object.
+            $File = $Folder.ParseName($FileName)
         }
     }
     
     process {
-        # Create COM object.
-        $Shell = New-Object -ComObject Shell.Application
-        # Create directory object.
-        $Folder = $Shell.Namespace($Directory)
-        # Create file object.
-        $File = $Folder.ParseName($FileName)
         # Iterate over properties and add them to array.
         $Metadata = @{}
         0..500 | ForEach-Object {
@@ -142,6 +164,6 @@ function Get-FileMetaDataInfosRoH {
     }
     
     end {
-        
+        $Shell.Suspend()
     }
 }
