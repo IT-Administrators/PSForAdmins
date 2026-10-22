@@ -105,7 +105,9 @@ function Resolve-ADUserRoH {
                 $u = Get-ADUser -Filter "UserPrincipalName -eq '$escaped'" -Properties $properties
             }
 
-            if ($u) { return $u }
+            if ($u) { 
+                return $u 
+            }
         }
 
         # Fallback to sAMAccountName.
@@ -122,7 +124,9 @@ function Resolve-ADUserRoH {
             $u2 = Get-ADUser -Filter "SamAccountName -eq '$escaped'" -Properties $properties
         }
 
-        if ($u2) { return $u2 }
+        if ($u2) { 
+            return $u2 
+        }
 
         throw "Resolve-ADUserRoH: User '$Identity' could not be found in Active Directory."
     }
@@ -211,23 +215,23 @@ function Get-ADGroupByNameSafe {
         $escaped = $GroupIdentity.Replace("'", "''")
 
         if ($Server -and $Credential) {
-            $matches = Get-ADGroup -Server $Server -Credential $Credential -Filter "Name -eq '$escaped'" -Properties $properties
+            $matched = Get-ADGroup -Server $Server -Credential $Credential -Filter "Name -eq '$escaped'" -Properties $properties
         }
         elseif ($Server) {
-            $matches = Get-ADGroup -Server $Server -Filter "Name -eq '$escaped'" -Properties $properties
+            $matched = Get-ADGroup -Server $Server -Filter "Name -eq '$escaped'" -Properties $properties
         }
         elseif ($Credential) {
-            $matches = Get-ADGroup -Credential $Credential -Filter "Name -eq '$escaped'" -Properties $properties
+            $matched = Get-ADGroup -Credential $Credential -Filter "Name -eq '$escaped'" -Properties $properties
         }
         else {
-            $matches = Get-ADGroup -Filter "Name -eq '$escaped'" -Properties $properties
+            $matched = Get-ADGroup -Filter "Name -eq '$escaped'" -Properties $properties
         }
 
-        if ($matches) {
-            if ($matches.Count -gt 1) {
-                Write-Warning ("Get-ADGroupByNameSafe: Multiple groups found with Name '{0}'. Returning the first match: {1}" -f $GroupIdentity, $matches[0].DistinguishedName)
+        if ($matched) {
+            if ($matched.Count -gt 1) {
+                Write-Warning ("Get-ADGroupByNameSafe: Multiple groups found with Name '{0}'. Returning the first match: {1}" -f $GroupIdentity, $matched[0].DistinguishedName)
             }
-            return $matches[0]
+            return $matched[0]
         }
 
         throw "Get-ADGroupByNameSafe: Group '$GroupIdentity' could not be found in Active Directory."
@@ -462,7 +466,9 @@ function Get-ADGroupMembershipPathRoH {
         foreach ($m in $members) {
 
             $memberDN = $m.DistinguishedName
-            if (-not $memberDN) { continue }
+            if (-not $memberDN) { 
+                continue 
+            }
 
             # Record first known parent link for the member.
             if (-not $parent.ContainsKey($memberDN)) {
@@ -481,7 +487,9 @@ function Get-ADGroupMembershipPathRoH {
                     $cursorDN = $parent[$cursorDN]
                     $pathDNList.Add($cursorDN) | Out-Null
 
-                    if ($cursorDN -ieq $StartGroupDN) { break }
+                    if ($cursorDN -ieq $StartGroupDN) { 
+                        break 
+                    }
                 }
 
                 $pathDN = $pathDNList.ToArray()
@@ -643,10 +651,14 @@ function Get-ADContributingGroupsToMembershipRoH {
     # Evaluate each direct child group as a potential contributor.
     foreach ($m in $directMembers) {
 
-        if ($m.objectClass -ne 'group') { continue }
+        if ($m.objectClass -ne 'group') { 
+            continue 
+        }
 
         $childGroupDN = $m.DistinguishedName
-        if (-not $childGroupDN) { continue }
+        if (-not $childGroupDN) { 
+            continue 
+        }
 
         $isInChild = Test-ADTransitiveGroupMembershipRoH -UserDN $UserDN -GroupDN $childGroupDN -Server $Server -Credential $Credential
 
@@ -816,7 +828,9 @@ function Test-IsUserInGroupRoH {
         $out.IsMember    = $path.Found
         $out.Path        = $path.PathPretty
         $out.CheckMethod = "BFS path reconstruction (single path)"
-        if ($fast -ne $null) { $out.CheckMethod = "Fast LDAP check + BFS path reconstruction (single path)" }
+        if ($null -ne $fast) { 
+            $out.CheckMethod = "Fast LDAP check + BFS path reconstruction (single path)" 
+        }
     }
 
     # Contributing direct child groups.
@@ -836,7 +850,9 @@ function Test-IsUserInGroupRoH {
         }
 
         $out.CheckMethod = "Contributing direct child groups"
-        if ($fast -ne $null) { $out.CheckMethod = "Fast LDAP check + Contributing direct child groups" }
+        if ($null -ne $fast) { 
+            $out.CheckMethod = "Fast LDAP check + Contributing direct child groups" 
+        }
     }
 
     return [pscustomobject]$out
