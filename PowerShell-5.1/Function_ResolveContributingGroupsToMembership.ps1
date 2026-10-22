@@ -841,5 +841,3 @@ function Test-IsUserInGroupRoH {
 
     return [pscustomobject]$out
 }
-
-Test-IsUserInGroupRoH -UserIdentity R100380 -GroupIdentity "Protected users"
