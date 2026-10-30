@@ -167,6 +167,8 @@ function New-LdapConnectionRoH {
     
     .PARAMETER HostName
         DNS name or IP address of the AD DS domain controller or AD LDS host.
+        In the original class this supports an array of servers. Here only one can be used which should not be a problem
+        because of the replication when managing active directory instances.
     
     .PARAMETER Port
         LDAP or LDAPS TCP port. Common AD DS values are 389 and 636. AD LDS ports are instance-specific.
@@ -207,7 +209,7 @@ function New-LdapConnectionRoH {
         [Parameter(Mandatory,
         HelpMessage = "Port the service listenes on for example: 389 (LDAP), 636 (LDAPS)")] 
         [ValidateRange(1,65535)] 
-        [int]$Port = 1636,
+        [int]$Port = 636,
 
         [Parameter(
         HelpMessage = "Credential of an authorized user. If empty the current user is used.")]
@@ -228,8 +230,7 @@ function New-LdapConnectionRoH {
         [int]$TimeoutSeconds = 30
     )
 
-    # Ensure the assembly is loaded (redundant because it is already loaded at top,
-    # but harmless. You kept it here, so we keep it.)
+    # Ensure the assembly is loaded.
     Add-Type -AssemblyName System.DirectoryServices.Protocols
 
     # Build the connection target (server + port + SSL)
@@ -237,8 +238,8 @@ function New-LdapConnectionRoH {
     # LdapDirectoryIdentifier takes:
     #   - server name / address
     #   - port (1636 here = common LDAPS port for ADLDS setups)
-    #   - fullyQualifiedDnsHostName (false)
-    #   - connectionless (false)
+    #   - fullyQualifiedDnsHostName (false): If false, an element can be an IP address, a DNS domain or host name, or null. 
+    #   - connectionless (false): Always TCP
     $identifier = New-Object System.DirectoryServices.Protocols.LdapDirectoryIdentifier(
         $HostName,
         $Port,
@@ -250,7 +251,6 @@ function New-LdapConnectionRoH {
     
     # AuthType Negotiate means Windows will choose the best available mechanism
     # (Kerberos/NTLM) using the current security context (or configured context).
-    # You pass $null credentials here -> means "use current credentials".
     if ($Credential) {
         $networkCredential = $Credential.GetNetworkCredential()
 
@@ -266,28 +266,28 @@ function New-LdapConnectionRoH {
         $Conn.AuthType = $AuthenticationType
     }
 
+    # Apply SSL if the switch was used.
     $Conn.SessionOptions.SecureSocketLayer = $UseSSL.isPresent
 
-    # Use LDAPv3 (standard modern LDAP protocol version)
+    # Use LDAPv3 (standard modern LDAP protocol version).
     $Conn.SessionOptions.ProtocolVersion = 3
     # Set connection timeout.
     $Conn.Timeout = [TimeSpan]::FromSeconds($TimeoutSeconds)
 
     # Bind actually connects/authenticates to the LDAP service.
     # If this fails, an exception will be thrown.
-    # CHANGED: connection handling. If LDAPS connection is not possible, LDAP is used.
     try {
         $Conn.Bind()
-        # Return the connected/bound LDAP connection object
+        # Return the connected/bound LDAP connection object.
         return $Conn
     }
     catch {
+        # Close connection officially.
         $Conn.Dispose()
-        #Write-Log $_.Exception -Level WARNING
+        # Write error on connection issue.
         Write-Error $_.Exception -ErrorAction Stop
     }
 }
-
 function Add-LdapAttributeToRequestRoH {
     <#
     .SYNOPSIS
